@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap");
 
 body {
-  background-color: black;
+  /* background-color: black; */
   margin: 0;
 }
 
@@ -22,7 +22,7 @@ body {
   justify-content: center;
   align-items: center;
   color: #00c895;
-  font-family: "Press Start 2P", cursive;
+  font-family: "Arial";
   font-size: 1.25em;
   border-bottom-color: grey;
   border-bottom-style: solid;
@@ -32,8 +32,8 @@ body {
 .main-layout__content {
   display: flex;
   width: 100%;
-  color: #fff;
-  font-family: "Press Start 2P", cursive;
+  color: rgb(0, 0, 0);
+  font-family: "Arial";
   font-size: 1em;
 }
 
@@ -53,8 +53,8 @@ body {
 .landing-page__start-button {
   background-color: #00c895;
   border: none;
-  color: #fff;
-  font-family: "Press Start 2P", cursive;
+  color: rgb(0, 0, 0);
+  font-family: "Arial";
   font-size: 1em;
   text-decoration: none;
   width: 250px;
@@ -65,8 +65,8 @@ body {
 .landing-page__nav-button {
   background-color: #00c895;
   border: none;
-  color: #fff;
-  font-family: "Press Start 2P", cursive;
+  color: rgb(0, 0, 0);
+  font-family: "Arial";
   font-size: 1em;
   text-decoration: none;
   width: 100px;
@@ -76,8 +76,8 @@ body {
 .landing-page__waiting-button {
   background-color: grey;
   border: none;
-  color: #fff;
-  font-family: "Press Start 2P", cursive;
+  color: rgb(0, 0, 0);
+  font-family: "Arial";
   font-size: 1em;
   text-decoration: none;
   width: 250px;
@@ -101,8 +101,8 @@ body {
 .join-match__start-button {
   background-color: #00c895;
   border: none;
-  color: #fff;
-  font-family: "Press Start 2P", cursive;
+  color: rgb(0, 0, 0);
+  font-family: "Arial";
   font-size: 1em;
   text-decoration: none;
   width: 250px;
@@ -113,8 +113,8 @@ body {
 .join-match__waiting-button {
   background-color: grey;
   border: none;
-  color: #fff;
-  font-family: "Press Start 2P", cursive;
+  color: rgb(0, 0, 0);
+  font-family: "Arial";
   font-size: 1em;
   text-decoration: none;
   width: 250px;
@@ -127,7 +127,7 @@ body {
  */
 
 .dashboard-heading {
-  font-family: "Press Start 2P", cursive;
+  font-family: "Arial";
   color: #00c895;
   font-size: 50px;
   text-align: center;
@@ -145,7 +145,7 @@ body {
     "board-1 board-2"
     "title-1 title-2"
     "action action";
-  font-family: "Press Start 2P", cursive;
+  font-family: "Arial";
   color: #00c895;
   font-size: 15px;
   justify-content: center;
@@ -263,6 +263,11 @@ body {
   row-gap: 1em;
 }
 
+.message-container {
+  height: 100px;
+  text-align: center;
+}
+
 .h-100 {
   height: 100%;
 }
@@ -303,6 +308,14 @@ body {
   margin-top: 10px;
 }
 
+.margin-right-10px {
+  margin-right: 10px;
+}
+
+.margin-left-10px {
+  margin-left: 10px;
+}
+
 .margin-top-20px {
   margin-top: 20px;
 }
@@ -329,8 +342,90 @@ body {
  */
 
 .board__container {
-  color: #000000;
+  color: black;
   margin-top: 10px;
+  width: 40%;
+  display: inline-block;
+  font-size: 0px;
+}
+
+.side_sectional {
+  vertical-align: top;
+  text-align: center;
+  width: 29%;
+  display: inline-block;
+}
+
+.main_section {
+  display: block;
+  width: 100%;
+}
+
+.prize_section {
+  width: 300px;
+  margin: 0 auto;
+}
+
+.prize_section_half {
+  display: inline-block;
+  width: calc(95% / 2);
+  vertical-align: top;
+}
+
+.housie_table_navbutton {
+  border: none;
+  color: rgb(0, 0, 0);
+  font-family: "Arial";
+  font-size: 1em;
+  text-decoration: none;
+  width: 100%;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.select_button {
+  background-color: #00c895;
+}
+
+.cancel_button {
+  background-color: rgb(198, 198, 198);
+}
+
+.prize_options_section {
+  width: 100%;
+  font-size: 25px;
+}
+
+.winning_pattern {
+  width: calc(100% / 8);
+  height: 25px;
+  color: white;
+  display: inline-block;
+  font-size: 15px;
+  line-height: 25px;
+  border: 1px solid black;
+  margin: 2px;
+}
+
+.pattern_available {
+  background-color: rgb(123, 255, 149);
+  cursor: pointer;
+}
+
+.pattern_not_available {
+  background-color: rgb(164, 164, 164);
+}
+
+.housie__container {
+  margin-bottom: 20px;
+}
+
+.select_ticket_mode_on:hover {
+  background-color: rgb(179, 179, 179);
+}
+
+.eliminated_ticket {
+  background-color: rgb(179, 179, 179);
 }
 
 .board__row {
@@ -343,27 +438,29 @@ body {
   width: 100%;
 }
 
+.marked__tile {
+  background: rgb(122, 225, 168) !important;
+}
+
 .board__square {
   height: 50px;
-  width: 50px;
-  background: #fff;
-  border: 1px solid #999;
-  cursor: pointer;
+  width: calc(100% / 9);
+  border: 1px solid black;
+  font-size: 20px;
   font-weight: bold;
-  font-size: 1.2em;
   line-height: 50px;
   text-align: center;
 }
 
-.board__square:hover {
-  filter: brightness(80%);
+.clickable {
+  cursor: pointer;
 }
 
 .board__continue-button {
   background-color: #00c895;
   border: none;
-  color: #fff;
-  font-family: "Press Start 2P", cursive;
+  color: rgb(0, 0, 0);
+  font-family: "Arial";
   font-size: 1em;
   text-decoration: none;
   width: 250px;
@@ -406,7 +503,7 @@ body {
     "title title"
     "heading-p1 heading-p2"
     "score-p1 score-p2";
-  font-family: "Press Start 2P", cursive;
+  font-family: "Arial";
   justify-content: center;
   text-align: center;
   margin-bottom: 100px;

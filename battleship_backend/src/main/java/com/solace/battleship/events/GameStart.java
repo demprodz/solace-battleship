@@ -1,6 +1,8 @@
 package com.solace.battleship.events;
 
+import java.util.HashMap;
 import java.util.Objects;
+import com.solace.battleship.models.GameNumberSet;
 
 /**
  * A GameStart Event
@@ -8,38 +10,50 @@ import java.util.Objects;
  * @author Andrew Roberts, Thomas Kunnumpurath
  */
 public class GameStart {
-
-    private PlayerJoined player1;
-    private PlayerJoined player2;
+    private String sessionId;
+    private HashMap<String, Player> players;
+    private GameNumberSet gameNumberSet;
+    private boolean success;
 
     public GameStart() {
     }
 
-    public boolean setPlayerJoined(PlayerJoined request) {
-        if (request.getPlayerName() == PlayerName.player1 && getPlayer1() == null) {
-            setPlayer1(request);
-            return true;
-        } else if (request.getPlayerName() == PlayerName.player2 && getPlayer2() == null) {
-            setPlayer2(request);
-            return true;
-        }
-        return false;
+    public GameStart(String sessionId) {
+        this.sessionId = sessionId;
+        players = new HashMap<String, Player>();
+        success = false;
     }
 
-    public PlayerJoined getPlayer1() {
-        return this.player1;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
-    public void setPlayer1(final PlayerJoined player1) {
-        this.player1 = player1;
+    public String getSessionId() {
+        return sessionId;
     }
 
-    public PlayerJoined getPlayer2() {
-        return this.player2;
+    public void setPlayers(HashMap<String, Player> players) {
+        this.players = players;
     }
 
-    public void setPlayer2(final PlayerJoined player2) {
-        this.player2 = player2;
+    public HashMap<String, Player> getPlayers() {
+        return this.players;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public boolean getSuccess() {
+        return success;
+    }
+
+    public void setGameNumberSet(GameNumberSet gameNumberSet) {
+        this.gameNumberSet = gameNumberSet;
+    }
+
+    public GameNumberSet getGameNumberSet() {
+        return gameNumberSet;
     }
 
     @Override
@@ -50,17 +64,17 @@ public class GameStart {
             return false;
         }
         GameStart gameStart = (GameStart) o;
-        return Objects.equals(this.player1, gameStart.player1) && Objects.equals(this.player2, gameStart.player2);
+        return Objects.equals(this.players, gameStart.players);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(player1, player2);
+        return Objects.hash(players);
     }
 
     @Override
     public String toString() {
-        return "{" + " Player1='" + getPlayer1() + "'" + ", Player2='" + getPlayer2() + "'" + "}";
+        return "{" + " Players='" + players + "'}";
     }
 
 }

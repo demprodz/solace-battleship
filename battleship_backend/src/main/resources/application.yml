@@ -7,12 +7,28 @@ spring:
           destination: JOIN-REQUESTS
           group: SOLACE-BATTLESHIP
           binder: solace_cloud
+        gamestart_request:
+          destination: GAMESTART-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
         board_set_request:
           destination: BOARD-SET-REQUESTS
           group: SOLACE-BATTLESHIP
           binder: solace_cloud
         move_request:
           destination: MOVE-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
+        tile_select_request:
+          destination: TILE-SELECT-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
+        nextnumber_choose_request:
+          destination: NEXTNUMBER-CHOOSE-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
+        prize_submit_request:
+          destination: PRIZE-SUBMIT-REQUESTS
           group: SOLACE-BATTLESHIP
           binder: solace_cloud
       binders:
@@ -30,6 +46,9 @@ spring:
             consumer:
               #Subscription for the join request queue
               queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/JOIN-REQUEST/*
+          gamestart_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/GAMESTART-REQUEST
           board_set_request:
             consumer:
               #Subscription for the board set request queue
@@ -38,6 +57,15 @@ spring:
             consumer:
               #Subscription for the move request queue
               queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/MOVE-REQUEST/*
+          tile_select_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/TILE-SELECT-REQUEST/*
+          nextnumber_choose_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/NEXTNUMBER-CHOOSE-REQUEST
+          prize_submit_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/PRIZE-SUBMIT-REQUEST/*
 logging:
   level:
     root: INFO

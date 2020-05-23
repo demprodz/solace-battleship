@@ -34,10 +34,10 @@ export class BoardSet {
     this.player.isTurn = false;
 
     //WARM-UP THE BOARD-SET-REPLY SUBSCRIPTION
-    this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/BOARD-SET-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER`);
+    this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/BOARD-SET-REPLY/${this.player.getPlayerIdForTopic()}/CONTROLLER`);
 
     //SET THE SUBSCRIPTION FOR THE MATCH START
-    this.solaceClient.subscribe(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, msg => {
+    this.solaceClient.subscribe(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`, (msg) => {
       this.router.navigateToRoute("match");
     });
   }
@@ -82,9 +82,9 @@ export class BoardSet {
       //Send the request to set the board
       this.solaceClient
         .sendRequest(
-          `${this.topicHelper.prefix}/BOARD-SET-REQUEST/${this.player.getPlayerNameForTopic()}`,
+          `${this.topicHelper.prefix}/BOARD-SET-REQUEST/${this.player.getPlayerIdForTopic()}`,
           JSON.stringify(boardsetEvent),
-          `${this.topicHelper.prefix}/BOARD-SET-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER`
+          `${this.topicHelper.prefix}/BOARD-SET-REPLY/${this.player.getPlayerIdForTopic()}/CONTROLLER`
         )
         .then((msg: any) => {
           let boardsetResult: BoardSetResult = JSON.parse(msg.getBinaryAttachment());
@@ -94,7 +94,7 @@ export class BoardSet {
             this.error = "Board Set Action Failed! Please try again!";
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.error = err;
         });
     }
@@ -102,7 +102,7 @@ export class BoardSet {
 
   detached() {
     //Unsubscribe from the .../BOARD-SET-REPLY event
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/BOARD-SET-REPLY/${this.player.getPlayerNameForTopic()}/CONTROLLER`);
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/BOARD-SET-REPLY/${this.player.getPlayerIdForTopic()}/CONTROLLER`);
     //Unsubscribe from the ../MATCH-START event
     this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/MATCH-START/CONTROLLER`);
   }

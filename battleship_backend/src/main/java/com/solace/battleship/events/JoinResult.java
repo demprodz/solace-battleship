@@ -2,6 +2,8 @@ package com.solace.battleship.events;
 
 import java.util.Objects;
 
+import com.solace.battleship.models.TicketSet;
+
 /**
  * The result of a JoinRequest
  * 
@@ -9,22 +11,43 @@ import java.util.Objects;
  */
 public class JoinResult {
 
-    private PlayerName playerName;
+    private String playerId;
+    private String playerNickname;
     private boolean success;
     private String message;
+    private TicketSet ticketSet;
 
-    public JoinResult(final PlayerName playerName, final boolean success, final String message) {
-        this.playerName = playerName;
+    public JoinResult(final String playerId, final String playerNickname, final boolean success, final String message,
+            final TicketSet ticketSet) {
+        this.playerId = playerId;
+        this.playerNickname = playerNickname;
         this.success = success;
         this.message = message;
+        this.ticketSet = ticketSet;
     }
 
-    public PlayerName getPlayerName() {
-        return playerName;
+    public TicketSet getTicketSet() {
+        return ticketSet;
     }
 
-    public void setPlayerName(final PlayerName playerName) {
-        this.playerName = playerName;
+    public void setTicketSet(final TicketSet ticketSet) {
+        this.ticketSet = ticketSet;
+    }
+
+    public String getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(final String playerId) {
+        this.playerId = playerId;
+    }
+
+    public String getPlayerNickname() {
+        return playerNickname;
+    }
+
+    public void setPlayerNickname(final String playerNickname) {
+        this.playerNickname = playerNickname;
     }
 
     public boolean isSuccess() {
@@ -47,11 +70,6 @@ public class JoinResult {
         return this.success;
     }
 
-    public JoinResult playerName(PlayerName playerName) {
-        this.playerName = playerName;
-        return this;
-    }
-
     public JoinResult success(boolean success) {
         this.success = success;
         return this;
@@ -70,19 +88,20 @@ public class JoinResult {
             return false;
         }
         JoinResult joinResult = (JoinResult) o;
-        return Objects.equals(playerName, joinResult.playerName) && success == joinResult.success
+        return Objects.equals(playerId, joinResult.playerId)
+                && Objects.equals(playerNickname, joinResult.playerNickname) && success == joinResult.success
                 && Objects.equals(message, joinResult.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(playerName, success, message);
+        return Objects.hash(playerId, playerNickname, success, message);
     }
 
     @Override
     public String toString() {
-        return "{" + " playerName='" + getPlayerName() + "'" + ", success='" + isSuccess() + "'" + ", message='"
-                + getMessage() + "'" + "}";
+        return "{" + "playerId='" + getPlayerId() + "'" + ", playerNickname='" + getPlayerNickname() + "'"
+                + ", success='" + isSuccess() + "'" + ", message='" + getMessage() + "'" + "}";
     }
 
 }

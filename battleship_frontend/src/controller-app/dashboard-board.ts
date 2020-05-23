@@ -28,7 +28,7 @@ export class DashboardBoard {
     //Note: Be mindful of modifying these properties as you may need to modify the canvas width
     this.boardProperties = {
       units: this.gameParams.gameboardDimensions,
-      size: 60
+      size: 60,
     };
   }
 
@@ -39,7 +39,7 @@ export class DashboardBoard {
    */
   moveUpdateChanged(moveResponseEvent: MoveResponseEvent, oldValue: MoveResponseEvent) {
     if (moveResponseEvent != null) {
-      console.log(JSON.stringify(moveResponseEvent));
+      //console.log(JSON.stringify(moveResponseEvent));
       this.renderBoard(moveResponseEvent.playerBoard);
       this.dropMissile(
         moveResponseEvent.playerBoard,

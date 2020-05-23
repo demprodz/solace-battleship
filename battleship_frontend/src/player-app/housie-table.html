@@ -1,0 +1,52 @@
+<template>
+  <div class="flex-column justify__center w-100 h-100">
+    <div class="board__playerHeader">${player.nickname}</div>
+    <br />
+    <br />
+    <div show.bind="pageState ==='WAITING_STATE'" class="flex-column padding-20px align__center">
+      <p>The game will begin shortly...</p>
+      <progress value.bind="countdown" max="3" id="progressBar"></progress>
+    </div>
+    <div show.bind="pageState !=='WAITING_STATE'" class="margin-top-10px w-100 message-container">${currentNumber} was drawn</div>
+    <div class="main_section">
+      <div class="side_sectional"></div>
+      <div class="board__container">
+        <div
+          repeat.for="ticket of player.numTickets"
+          class="housie__container ${selectTicketMode === true ? 'select_ticket_mode_on' : ''} ${tickets[ticket].isEliminated === true ? 'eliminated_ticket' : ''}"
+          click.delegate="selectTicketMode === true && tickets[ticket].isEliminated !== true ? submitPrizeRequest(ticket) : null"
+        >
+          <div repeat.for="row of gameParams.numRows" class="board__row">
+            <div
+              repeat.for="column of gameParams.numColumns"
+              class="board__square ${tickets[$parent.$parent.ticket].isEliminated !== true && tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].value > 0 ? 'clickable' : '' } ${tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].isMarked === true ? 'marked__tile' : ''}"
+              click.delegate="tickets[$parent.$parent.ticket].isEliminated !== true && pageState === 'IN_PROGRESS_STATE' && tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].value > 0 && selectTicketMode !== true ? tileSelectEvent($parent.$parent.ticket, $parent.row,column) : null"
+            >
+              ${tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].value > 0 ? tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].value : ""}
+            </div>
+          </div>
+          <br />
+        </div>
+      </div>
+      <div class="side_sectional">
+        <div class="prize_section" mouseover.delegate="showPrizeOptions()" mouseout.delegate="hidePrizeOptions()">
+          <div class="prize_section_half">
+            <button class="housie_table_navbutton select_button margin-top-10px margin-right-10px">Claim Prize</button>
+            <div class="prize_options_section" hidden.bind="showPrizes !== true">
+              <div
+                repeat.for="i of prizes.length"
+                class="winning_pattern ${prizes[i].isTaken !== true ? 'pattern_available' : 'pattern_not_available'}"
+                click.delegate="prizes[i].isTaken !== true ? ticketModeOn(i) : null"
+              >
+                ${prizes[i].abbreviatedName}
+              </div>
+            </div>
+          </div>
+          <div class="prize_section_half">
+            <button class="housie_table_navbutton cancel_button margin-top-10px margin-right-10px" click.delegate="ticketModeOff()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

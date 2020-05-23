@@ -8,10 +8,19 @@ import java.util.Objects;
  * @author Andrew Roberts, Thomas Kunnumpurath
  */
 public class PlayerJoined {
-
+    private String playerId;
     private PlayerName playerName;
     private String playerNickname;
     private String sessionId;
+    private int numTickets;
+
+    public String getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(final String playerId) {
+        this.playerId = playerId;
+    }
 
     public PlayerName getPlayerName() {
         return playerName;
@@ -35,6 +44,14 @@ public class PlayerJoined {
 
     public void setPlayerNickname(final String playerNickname) {
         this.playerNickname = playerNickname;
+    }
+
+    public int getNumTickets() {
+        return numTickets;
+    }
+
+    public void setNumTickets(final int numTickets) {
+        this.numTickets = numTickets;
     }
 
     public PlayerJoined() {

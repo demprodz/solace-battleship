@@ -17,6 +17,8 @@ export class App {
     //Initializing the game params
     gameParams.allowedShips = gameConfig.allowed_ships;
     gameParams.gameboardDimensions = gameConfig.gameboard_dimensions;
+    gameParams.numRows = gameConfig.numRows;
+    gameParams.numColumns = gameConfig.numColumns;
     //Initializing the TopicPrefix with
     topicHelper.prefix = "SOLACE/BATTLESHIP";
   }
@@ -27,30 +29,40 @@ export class App {
     config.map([
       { route: "/", moduleId: PLATFORM.moduleName("controller-app/landing-page"), name: "" },
       {
-        route: "/join/:sessionId/:player",
+        route: "/join/:sessionId",
         moduleId: PLATFORM.moduleName("player-app/join"),
-        name: "join"
+        name: "join",
       },
       {
         route: "/board-set",
         moduleId: PLATFORM.moduleName("player-app/board-set"),
-        name: "board-set"
+        name: "board-set",
+      },
+      {
+        route: "/housie-table",
+        moduleId: PLATFORM.moduleName("player-app/housie-table"),
+        name: "housie-table",
+      },
+      {
+        route: "/admin-dashboard",
+        moduleId: PLATFORM.moduleName("controller-app/admin-dashboard"),
+        name: "admin-dashboard",
       },
       {
         route: "/match",
         moduleId: PLATFORM.moduleName("player-app/match"),
-        name: "match"
+        name: "match",
       },
       {
         route: "/dashboard",
         moduleId: PLATFORM.moduleName("controller-app/dashboard"),
-        name: "dashboard"
+        name: "dashboard",
       },
       {
         route: "/game-over/:msg",
         moduleId: PLATFORM.moduleName("player-app/game-over"),
-        name: "game-over"
-      }
+        name: "game-over",
+      },
     ]);
     this.router = router;
   }

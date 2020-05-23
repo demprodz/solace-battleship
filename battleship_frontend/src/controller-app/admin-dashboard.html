@@ -1,0 +1,25 @@
+<template>
+  <require from="./dashboard-board"></require>
+  <require from="../common/scoreboard"></require>
+  <div class="flex-column align__center w-100 h-100">
+    <div show.bind="pageState ==='WAITING_STATE'" class="margin-top-10px w-100 message-container">Click Next to draw a number</div>
+    <div show.bind="pageState !=='WAITING_STATE'" class="margin-top-10px w-100 message-container">${currentNumber} was drawn</div>
+    <div class="board__container">
+      <div repeat.for="row of gameNumberSet.numberSet.length" class="board__row">
+        <div
+          repeat.for="column of gameNumberSet.numberSet[0].length"
+          class="${gameNumberSet.numberSet[$parent.row][column].isMarked == true ? 'master_board_square marked__tile' : 'master_board_square'}"
+        >
+          ${gameNumberSet.numberSet[$parent.row][column].value}
+        </div>
+      </div>
+      <br />
+    </div>
+    <div class="flex justify__flex-end margin-top-10px">
+      <button class="landing-page__nav-button margin-top-10px margin-right-10px" click.delegate="isGameOver !== true && autoMode == false ? chooseNextNumberEvent() : null">Next</button>
+      <button class="landing-page__nav-button margin-top-10px margin-left-10px ${autoMode == true ? 'blue' : 'grey'}" click.trigger="toggleAutoMode()">
+        ${autoMode == true ? "Auto Mode On" : "Auto Mode Off"}
+      </button>
+    </div>
+  </div>
+</template>

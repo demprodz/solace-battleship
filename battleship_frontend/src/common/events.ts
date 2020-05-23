@@ -25,20 +25,24 @@ export type PlayerName = "player1" | "player2";
  * @author: Thomas Kunnumpurath, Andrew Roberts
  */
 export class Player {
+  id: string;
   name: PlayerName;
   nickname: string;
   internalBoardState: PrivateBoardCellState[][];
   publicBoardState: KnownBoardCellState[][];
   sessionId: string;
   isTurn: boolean;
+  ticketSet: TicketSet;
+  numTickets: number;
 
   getOtherPlayerNameForTopic(): string {
     if (this.name == "player1") return "PLAYER2";
     else return "PLAYER1";
   }
 
-  getPlayerNameForTopic(): string {
-    return this.name.toUpperCase();
+  getPlayerIdForTopic(): string {
+    return this.id;
+    // return this.name.toUpperCase();
   }
 }
 
@@ -48,20 +52,75 @@ export class Player {
  * playerNickname: the nickname of hte player
  */
 export class PlayerJoined {
+  playerId: string;
   playerName: PlayerName;
   playerNickname: string;
   sessionId: string;
+  numTickets: number;
 }
 
 /**
  * Object that represents the start event of the game
- * player1: The PlayerJoined object for the start of the game
- * player2: The PlayerJoined object for the start of the game
  */
 export class GameStart {
-  player1: PlayerJoined;
-  player2: PlayerJoined;
   sessionId: string;
+  players: { [key: string]: Player };
+  gameNumberSet: GameNumberSet;
+  success: boolean;
+}
+
+export class GameStartRequest {
+  sessionId: string;
+}
+
+export class GameNumberSet {
+  numberSet: HousieNumber[][];
+  prizes: IPrize[];
+  numbersLeft: number;
+}
+
+export class HousieNumber {
+  value: number;
+  isMarked: boolean;
+}
+
+export class IPrize {
+  prizeName: string;
+  abbreviatedName: string;
+  description: string;
+  numPrizes: number;
+  isTaken: boolean;
+}
+
+export class NextNumberChooseEvent {
+  sessionId: string;
+}
+
+export class NextNumberChooseResult {
+  sessionId: string;
+  value: number;
+  rowIndex: number;
+  columnIndex: number;
+  success: boolean;
+  isGameOver: boolean;
+  returnMessage: string;
+}
+
+export class PrizeSubmitEvent {
+  sessionId: string;
+  playerId: string;
+  ticket: number;
+  selectedPrizeIndex: number;
+}
+
+export class PrizeSubmitResult {
+  sessionId: string;
+  playerId: string;
+  ticket: number;
+  selectedPrizeIndex: number;
+  success: boolean;
+  returnMessage: string;
+  responseType: string;
 }
 
 // CellState for the Board
@@ -111,15 +170,58 @@ export class BoardSetEvent {
   sessionId: string;
 }
 
+export class TileSelectEvent {
+  sessionId: string;
+  playerId: String;
+  ticket: number;
+  row: number;
+  column;
+}
+
+export class TileSelectResult {
+  sessionId: string;
+  playerId: string;
+  ticket: number;
+  row: number;
+  column: number;
+  newIsMarked: boolean;
+  success: boolean;
+  returnMessage: string;
+}
+
 /**
  * Object representing a join result
  */
 
 export class JoinResult {
-  playerName: PlayerName;
+  playerId: string;
+  playerNickname: string;
   success: boolean;
   message: string;
   sessionId: string;
+  ticketSet: TicketSet;
+}
+
+export class TicketSet {
+  tickets: Ticket[];
+}
+
+export class Ticket {
+  ticketNumber: number;
+  ticketMatrix: Spot[][];
+  populatedSpots: number;
+  markedSpots: number;
+  isEliminated: boolean;
+  foundEarlyFive: boolean;
+  foundTopLine: boolean;
+  foundMiddleLine: boolean;
+  foundBottomLine: boolean;
+  foundFullHouse: boolean;
+}
+
+export class Spot {
+  value: number;
+  isMarked: boolean;
 }
 
 /**

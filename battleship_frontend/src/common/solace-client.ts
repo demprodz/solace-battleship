@@ -70,8 +70,8 @@ export class SolaceClient {
           password: gameConfig.solace_password,
           connectRetries: 3,
           publisherProperties: {
-            acknowledgeMode: solace.MessagePublisherAcknowledgeMode.PER_MESSAGE
-          }
+            acknowledgeMode: solace.MessagePublisherAcknowledgeMode.PER_MESSAGE,
+          },
         });
       } catch (error) {
         this.log(error.toString());
@@ -79,19 +79,19 @@ export class SolaceClient {
       // define session event listeners
 
       //The UP_NOTICE dictates whether the session has been established
-      this.session.on(solace.SessionEventCode.UP_NOTICE, sessionEvent => {
+      this.session.on(solace.SessionEventCode.UP_NOTICE, (sessionEvent) => {
         this.log("=== Successfully connected and ready to subscribe. ===");
         resolve();
       });
 
       //The CONNECT_FAILED_ERROR implies a connection failure
-      this.session.on(solace.SessionEventCode.CONNECT_FAILED_ERROR, sessionEvent => {
+      this.session.on(solace.SessionEventCode.CONNECT_FAILED_ERROR, (sessionEvent) => {
         this.log("Connection failed to the message router: " + sessionEvent.infoStr + " - check correct parameter values and connectivity!");
         reject(`Check the settings in game-config.ts and try again!`);
       });
 
       //DISCONNECTED implies the client was disconnected
-      this.session.on(solace.SessionEventCode.DISCONNECTED, sessionEvent => {
+      this.session.on(solace.SessionEventCode.DISCONNECTED, (sessionEvent) => {
         this.log("Disconnected.");
         if (this.session !== null) {
           this.session.dispose();
@@ -101,24 +101,24 @@ export class SolaceClient {
       });
 
       //ACKNOWLEDGED MESSAGE implies that the broker has confirmed message receipt
-      this.session.on(solace.SessionEventCode.ACKNOWLEDGED_MESSAGE, sessionEvent => {
+      this.session.on(solace.SessionEventCode.ACKNOWLEDGED_MESSAGE, (sessionEvent) => {
         this.log("Delivery of message with correlation key = " + sessionEvent.correlationKey + " confirmed.");
       });
 
       //REJECTED_MESSAGE implies that the broker has rejected the message
-      this.session.on(solace.SessionEventCode.REJECTED_MESSAGE_ERROR, sessionEvent => {
+      this.session.on(solace.SessionEventCode.REJECTED_MESSAGE_ERROR, (sessionEvent) => {
         this.log("Delivery of message with correlation key = " + sessionEvent.correlationKey + " rejected, info: " + sessionEvent.infoStr);
       });
 
       //SUBSCRIPTION ERROR implies that there was an error in subscribing on a topic
-      this.session.on(solace.SessionEventCode.SUBSCRIPTION_ERROR, sessionEvent => {
+      this.session.on(solace.SessionEventCode.SUBSCRIPTION_ERROR, (sessionEvent) => {
         this.log("Cannot subscribe to topic: " + sessionEvent.correlationKey);
         //remote the topic from the TopicSubscriptionMap
         this.topicSubscriptions.delete(sessionEvent.correlationKey);
       });
 
       //SUBSCRIPTION_OK implies that a subscription was succesfully applied/removed from the broker
-      this.session.on(solace.SessionEventCode.SUBSCRIPTION_OK, sessionEvent => {
+      this.session.on(solace.SessionEventCode.SUBSCRIPTION_OK, (sessionEvent) => {
         this.log(`Session co-relation-key for event: ${sessionEvent.correlationKey}`);
         //Check if the topic exists in the map
         if (this.topicSubscriptions.get(sessionEvent.correlationKey)) {
@@ -136,7 +136,7 @@ export class SolaceClient {
       });
 
       //Message callback function
-      this.session.on(solace.SessionEventCode.MESSAGE, message => {
+      this.session.on(solace.SessionEventCode.MESSAGE, (message) => {
         //Get the topic name from the message's destination
         let topicName: string = message.getDestination().getName();
 
@@ -206,7 +206,7 @@ export class SolaceClient {
       request.setUserPropertyMap(propertyMap);
       // send request
       let timeoutRef = null;
-      this.subscribeReply(replyTopic, msg => {
+      this.subscribeReply(replyTopic, (msg) => {
         if (timeoutRef != null) {
           clearTimeout(timeoutRef);
           timeoutRef = null;

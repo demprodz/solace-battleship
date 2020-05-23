@@ -5,7 +5,7 @@
  *
  */
 export class GameParams {
-  constructor(private _allowedShips: number, private _gameboardDimensions: number) {}
+  constructor(private _allowedShips: number, private _gameboardDimensions: number, private _numRows: number, private _numColumns: number) {}
 
   get allowedShips(): number {
     return this._allowedShips;
@@ -21,5 +21,21 @@ export class GameParams {
 
   set gameboardDimensions(gameboardDimensions: number) {
     this._gameboardDimensions = gameboardDimensions;
+  }
+
+  get numRows(): number {
+    return this._numRows;
+  }
+
+  get numColumns(): number {
+    return this._numColumns;
+  }
+
+  set numRows(numRows: number) {
+    this._numRows = numRows;
+  }
+
+  set numColumns(numColumns: number) {
+    this._numColumns = numColumns;
   }
 }

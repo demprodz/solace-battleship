@@ -2,6 +2,8 @@ package com.solace.battleship.events;
 
 import java.util.Objects;
 
+import com.solace.battleship.models.TicketSet;
+
 /**
  * An object representing a player and its associated states
  * 
@@ -14,6 +16,15 @@ public class Player {
     private PrivateBoardCellState[][] internalBoardState;
     private KnownBoardCellState[][] publicBoardState;
     private boolean isTurn;
+    private TicketSet ticketSet;
+
+    public TicketSet getTicketSet() {
+        return ticketSet;
+    }
+
+    public void setTicketSet(TicketSet ticketSet) {
+        this.ticketSet = ticketSet;
+    }
 
     public PlayerName getName() {
         return name;

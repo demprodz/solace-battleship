@@ -1,6 +1,7 @@
 package com.solace.battleship.engine;
 
 import com.solace.battleship.events.*;
+import com.solace.battleship.models.IPrize;
 
 /**
  * Interface for the battleship game engine. Determines all rules and functions
@@ -13,7 +14,7 @@ public interface IGameEngine {
   /**
    * Function to request for a game to be joined
    * 
-   * @param request   A player join request
+   * @param request A player join request
    * @return The result of a Join request
    */
   public JoinResult requestToJoinGame(PlayerJoined request);
@@ -33,6 +34,34 @@ public interface IGameEngine {
    * @return a GameStart event object
    */
   public GameStart getGameStartAndStartGame(String sessionId);
+
+  /**
+   * Function to get next random number from the master table
+   * 
+   * @param sessionId
+   * @return a NextNumberChooseResult object
+   */
+  public NextNumberChooseResult getNextNumber(String sessionId);
+
+  /**
+   * Function to request selecting tile on player's ticket
+   * 
+   * @param request
+   * @return The result of the select tile request
+   */
+  public TileSelectResponseEvent requestToSelectTile(TileSelectRequest request);
+
+  /**
+   * Function to request submitting ticket for prize
+   * 
+   * @param request
+   * @return The result of the submit prize request
+   */
+  public PrizeSubmitResult requestToSubmitPrize(PrizeSubmitRequest request);
+
+  public boolean updatePrizeStatus(PrizeSubmitRequest request);
+
+  public IPrize[] getPrizeStatus(String sessionId);
 
   /**
    * Function to request setting ships on a board
@@ -84,6 +113,7 @@ public interface IGameEngine {
 
   /**
    * Function to update the board
+   * 
    * @param event
    */
   public void updateBoard(MoveResponseEvent event);

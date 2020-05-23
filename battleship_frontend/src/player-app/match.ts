@@ -40,13 +40,13 @@ export class Match {
     }
 
     //Warm up the reply subscription
-    this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/MOVE-REPLY/${this.player.getPlayerNameForTopic()}/${this.player.getOtherPlayerNameForTopic()}`);
+    this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/MOVE-REPLY/${this.player.getPlayerIdForTopic()}/${this.player.getOtherPlayerNameForTopic()}`);
 
     //Subscribe to the other players move response event and update local state accordingly
     this.solaceClient.subscribe(
-      `${this.topicHelper.prefix}/MOVE-REPLY/${this.player.getOtherPlayerNameForTopic()}/${this.player.getPlayerNameForTopic()}`,
+      `${this.topicHelper.prefix}/MOVE-REPLY/${this.player.getOtherPlayerNameForTopic()}/${this.player.getPlayerIdForTopic()}`,
       // game start event handler callback
-      msg => {
+      (msg) => {
         //De-serialize the move response into a moveResponseEvent object
         let moveResponseEvent: MoveResponseEvent = JSON.parse(msg.getBinaryAttachment());
         //Update the approrpaite score/icons based on the move response
@@ -64,7 +64,7 @@ export class Match {
     this.solaceClient.subscribe(
       `${this.topicHelper.prefix}/MATCH-END/CONTROLLER`,
       // game start event handler callback
-      msg => {
+      (msg) => {
         let matchEndObj: MatchEnd = JSON.parse(msg.getBinaryAttachment());
         if (this.player.name == "player1" && matchEndObj.player1Score == 0) {
           this.router.navigateToRoute("game-over", { msg: "YOU LOSE!" });
@@ -108,9 +108,9 @@ export class Match {
       move.sessionId = this.player.sessionId;
       this.solaceClient
         .sendRequest(
-          `${this.topicHelper.prefix}/MOVE-REQUEST/${this.player.getPlayerNameForTopic()}`,
+          `${this.topicHelper.prefix}/MOVE-REQUEST/${this.player.getPlayerIdForTopic()}`,
           JSON.stringify(move),
-          `${this.topicHelper.prefix}/MOVE-REPLY/${this.player.getPlayerNameForTopic()}/${this.player.getOtherPlayerNameForTopic()}`
+          `${this.topicHelper.prefix}/MOVE-REPLY/${this.player.getPlayerIdForTopic()}/${this.player.getOtherPlayerNameForTopic()}`
         )
         .then((msg: any) => {
           //De-serialize the move response into a moveResponseEvent object
@@ -128,7 +128,7 @@ export class Match {
           //Rotate the turn message
           this.rotateTurnMessage();
         })
-        .catch(failedMessage => {
+        .catch((failedMessage) => {
           console.log(failedMessage);
           this.turnMessage += " ...TRY AGAIN!";
         });
@@ -146,6 +146,6 @@ export class Match {
   detached() {
     //Unsubcsribe for the events
     this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/MOVE-REQUEST/${this.player.getOtherPlayerNameForTopic()}`);
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/MOVE-REPLY/${this.player.getPlayerNameForTopic()}/${this.player.getOtherPlayerNameForTopic()}`);
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/MOVE-REPLY/${this.player.getPlayerIdForTopic()}/${this.player.getOtherPlayerNameForTopic()}`);
   }
 }

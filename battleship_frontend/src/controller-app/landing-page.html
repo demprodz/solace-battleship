@@ -3,8 +3,18 @@
   <div class="landing-page__container">
     <label>Players scan the QR Code to join Match Session: ${sessionId}</label>
     <div class="join-screen">
-      <player-qr player="player1" player-status.bind="player1Status" session-id.to-view="sessionId"></player-qr>
-      <player-qr player="player2" player-status.bind="player2Status" session-id.to-view="sessionId"></player-qr>
+      <div>${pageState}</div>
+      <progress value.bind="countdown" max="3" id="progressBar"></progress>
+      <a href="${playerJoinUrl}" target="_blank">Join Game</a>
+      <div class="flex justify__flex-end margin-top-10px">
+        <button class="landing-page__nav-button margin-top-10px" click.trigger="startGame()">Start Game</button>
+      </div>
+      <div>${playersMessage}</div>
+      <ul class="">
+        <li repeat.for="i of numPlayers" class="">
+          <div>${playersList[i]}</div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>

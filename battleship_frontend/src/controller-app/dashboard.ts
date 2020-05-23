@@ -31,7 +31,7 @@ export class Dashboard {
 
   attached() {
     //Subscribe to all MOVE-REPLYs from Player1 and Player2 to propogate in the dashboard
-    this.solaceClient.subscribe(`${this.topicHelper.prefix}/MOVE-REPLY/*/*`, msg => {
+    this.solaceClient.subscribe(`${this.topicHelper.prefix}/MOVE-REPLY/*/*`, (msg) => {
       let moveResponseEvent: MoveResponseEvent = JSON.parse(msg.getBinaryAttachment());
       this.moveResultMap[moveResponseEvent.player] = moveResponseEvent;
     });

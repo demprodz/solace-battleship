@@ -1,0 +1,2 @@
+export const WAITING_STATE = "WAITING_STATE";
+export const IN_PROGRESS_STATE = "IN_PROGRESS_STATE";

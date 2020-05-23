@@ -2,8 +2,9 @@ package com.solace.battleship.engine;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import com.solace.battleship.events.*;
+import com.solace.battleship.models.IPrize;
+import com.solace.battleship.models.TicketSet;
 
 import org.springframework.stereotype.Component;
 
@@ -27,32 +28,48 @@ public class GameEngine implements IGameEngine {
   public JoinResult requestToJoinGame(PlayerJoined request) {
     String returnMessage = "";
     boolean joinRequestResult;
+    TicketSet ticketSet = new TicketSet();
 
     gameSessionMap.putIfAbsent(request.getSessionId(), new GameSession(request.getSessionId()));
     GameSession session = gameSessionMap.get(request.getSessionId());
+
     if (session.getGameState() != GameState.WAITING_FOR_JOIN) {
       returnMessage = GAME_ALREADY_STARTED_ERROR;
       joinRequestResult = false;
     } else {
-      joinRequestResult = session.getGameStart().setPlayerJoined(request);
+      joinRequestResult = session.setPlayerJoined(request);
+      // joinRequestResult = session.getGameStart().setPlayerJoined(request);
       if (joinRequestResult) {
         returnMessage = PLAYER_JOIN_SUCCESS;
+        ticketSet = session.getPlayerTicketSet(request.getPlayerId());
       } else {
         returnMessage = PLAYER_ALREADY_JOINED_ERROR;
       }
     }
-    return new JoinResult(request.getPlayerName(), joinRequestResult, returnMessage);
+
+    // if (session.getGameState() != GameState.WAITING_FOR_JOIN) {
+    // returnMessage = GAME_ALREADY_STARTED_ERROR;
+    // joinRequestResult = false;
+    // } else {
+    // joinRequestResult = session.getGameStart().setPlayerJoined(request);
+    // if (joinRequestResult) {
+    // returnMessage = PLAYER_JOIN_SUCCESS;
+    // } else {
+    // returnMessage = PLAYER_ALREADY_JOINED_ERROR;
+    // }
+    // }
+    return new JoinResult(request.getPlayerId(), request.getPlayerNickname(), joinRequestResult, returnMessage,
+        ticketSet);
   }
 
   @Override
   public boolean canGameStart(String sessionId) {
     GameSession session = gameSessionMap.get(sessionId);
 
-    if (session != null && session.getGameState() == GameState.WAITING_FOR_JOIN) {
-      return session.getGameStart().getPlayer1() != null && session.getGameStart().getPlayer2() != null;
+    if (session == null) {
+      return false;
     }
-
-    return false;
+    return session.getPlayers().size() > 0;
   }
 
   @Override
@@ -60,11 +77,66 @@ public class GameEngine implements IGameEngine {
     GameSession session = gameSessionMap.get(sessionId);
 
     if (canGameStart(sessionId)) {
-      session.setGameState(GameState.WAITING_FOR_BOARD_SET);
       return session.getGameStart();
     }
 
-    return null;
+    return new GameStart();
+  }
+
+  @Override
+  public NextNumberChooseResult getNextNumber(String sessionId) {
+    GameSession session = gameSessionMap.get(sessionId);
+
+    if (session == null) {
+      return new NextNumberChooseResult(sessionId, false, SESSION_DOES_NOT_EXIST_ERROR);
+    } else {
+      return session.getNextNumber();
+    }
+  }
+
+  @Override
+  public TileSelectResponseEvent requestToSelectTile(TileSelectRequest request) {
+    GameSession session = gameSessionMap.get(request.getSessionId());
+
+    if (session == null) {
+      return new TileSelectResponseEvent(request.getSessionId(), request.getPlayerId(), false,
+          SESSION_DOES_NOT_EXIST_ERROR);
+    } else {
+      return session.setSelection(request);
+    }
+  }
+
+  @Override
+  public PrizeSubmitResult requestToSubmitPrize(PrizeSubmitRequest request) {
+    GameSession session = gameSessionMap.get(request.getSessionId());
+
+    if (session == null) {
+      return new PrizeSubmitResult(request.getSessionId(), request.getPlayerId(), false, SESSION_DOES_NOT_EXIST_ERROR);
+    } else {
+      return session.submitPrizeRequest(request);
+    }
+  }
+
+  @Override
+  public boolean updatePrizeStatus(PrizeSubmitRequest request) {
+    GameSession session = gameSessionMap.get(request.getSessionId());
+
+    if (session == null) {
+      return false;
+    } else {
+      return session.updatePrizeStatus(request);
+    }
+  }
+
+  @Override
+  public IPrize[] getPrizeStatus(String sessionId) {
+    GameSession session = gameSessionMap.get(sessionId);
+
+    if (session == null) {
+      return null;
+    } else {
+      return session.getPrizeStatus();
+    }
   }
 
   @Override
@@ -162,7 +234,7 @@ public class GameEngine implements IGameEngine {
     return new MatchEnd();
   }
 
-  public void updateBoard(MoveResponseEvent event){
+  public void updateBoard(MoveResponseEvent event) {
     gameSessionMap.get(event.getSessionId()).updateBoard(event);
   }
 }
