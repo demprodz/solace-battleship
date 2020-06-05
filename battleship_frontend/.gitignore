@@ -38,4 +38,5 @@ node_modules
 /test/coverage-karma
 
 # Environment variables
-/src/common/game-config.ts
+/src/common/config.txt
+# /src/common/game-config.ts
