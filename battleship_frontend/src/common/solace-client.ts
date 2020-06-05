@@ -52,6 +52,7 @@ export class SolaceClient {
    * Asynchronous function that connects to the Solace Broker and returns a promise.
    */
   async connect() {
+    console.log(gameConfig);
     return new Promise((resolve, reject) => {
       if (this.session !== null) {
         this.log("Already connected and ready to subscribe.");
