@@ -17,3 +17,39 @@
 .grey {
   background-color: rgb(160, 160, 160) !important;
 }
+
+.action-section {
+  display: inline-block;
+}
+
+.dashboard_prize_section {
+  width: 400px;
+  margin: 0 auto;
+  margin-top: 50px;
+}
+
+.dashboard-prize {
+  border-radius: 10px;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: left;
+  height: 45px;
+  line-height: 45px;
+  cursor: default !important;
+  color: var(--soft-white);
+  border: 1px solid var(--soft-white);
+  border-radius: 10px;
+  font: var(--subtitle-text-font);
+  font-size: 45px;
+}
+
+.prize_option_name {
+  float: left;
+  display: inline-block;
+}
+
+.prize_option_number {
+  float: right;
+  display: inline-block;
+}

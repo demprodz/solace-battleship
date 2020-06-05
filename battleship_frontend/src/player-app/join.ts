@@ -23,38 +23,23 @@ export class Join {
    * @param routeConfig
    */
   activate(params, routeConfig) {
-    //Set the name for the player from the route parameter
-    // this.player.name = params.player;
-    //set the sessionid for the player
-    this.player.sessionId = params.sessionId;
     this.player.id = this.playerId;
-    //update the topicHelperPrefix with the sessionId
-    this.topicHelper.prefix = this.topicHelper.prefix + "/" + params.sessionId;
+    this.player.sessionId = params.sessionId;
 
     //Connect to Solace
-    this.solaceClient
-      .connect()
-      .then(() => {
-        //Warm up the subscription for the JOIN-REPLY
-        this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/JOIN-REPLY/${this.playerId}/CONTROLLER`);
-
-        // //Subscribe to the GAME-START event
-        // this.solaceClient.subscribe(
-        //   `${this.topicHelper.prefix}/GAME-START/CONTROLLER`,
-        //   // game start event handler callback
-        //   (msg) => {
-        //     let gsObj: GameStart = JSON.parse(msg.getBinaryAttachment());
-        //     this.gameStart.player1 = gsObj.player1;
-        //     this.gameStart.player2 = gsObj.player2;
-        //     console.log("Game starting...");
-        //     console.log(this.gameStart);
-        //     this.router.navigateToRoute("board-set");
-        //   }
-        // );
-      })
-      .catch((ex) => {
-        console.log(ex);
-      });
+    if (this.solaceClient.session == null) {
+      this.solaceClient
+        .connect()
+        .then(() => {
+          //Warm up the subscription for the JOIN-REPLY
+          this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.id}/CONTROLLER`);
+        })
+        .catch((ex) => {
+          console.log(ex);
+        });
+    } else {
+      this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.id}/CONTROLLER`);
+    }
   }
 
   /**
@@ -71,16 +56,17 @@ export class Join {
       return;
     }
 
-    this.player.nickname = this.playerNickname;
+    this.player.name = this.playerNickname;
+
     let playerJoined: PlayerJoined = new PlayerJoined();
-    // playerJoined.playerName = this.player.name;
-    playerJoined.playerId = this.playerId;
+    playerJoined.playerId = this.player.id;
     playerJoined.playerNickname = this.playerNickname;
     playerJoined.sessionId = this.player.sessionId;
     playerJoined.numTickets = this.numTickets;
+
     //Publish a join request and change the pageState to waiting if the join request succeeded
-    let topicName: string = `${this.topicHelper.prefix}/JOIN-REQUEST/${this.playerId}`;
-    let replyTopic: string = `${this.topicHelper.prefix}/JOIN-REPLY/${this.playerId}/CONTROLLER`;
+    let topicName: string = `${this.topicHelper.prefix}/JOIN-REQUEST/${this.player.id}`;
+    let replyTopic: string = `${this.topicHelper.prefix}/JOIN-REPLY/${this.player.id}/CONTROLLER`;
     this.solaceClient
       .sendRequest(topicName, JSON.stringify(playerJoined), replyTopic)
       .then((msg: any) => {
@@ -88,7 +74,7 @@ export class Join {
         if (joinResult.success) {
           this.player.ticketSet = joinResult.ticketSet;
           this.player.numTickets = joinResult.ticketSet.tickets.length;
-          this.router.navigateToRoute("housie-table");
+          this.router.navigateToRoute("housie-table", { playerId: this.player.id });
         } else this.pageStatus = "Join Request Failed - Player Already Joined!";
       })
       .catch((error) => {
@@ -97,7 +83,6 @@ export class Join {
   }
 
   detached() {
-    //Unsubscribe from the <PREFIX>/GAME-START and <PREFIX>>/JOIN-REPLY/[PLAYER1 or PLAYER2]
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REPLY/${this.playerId}/CONTROLLER`);
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REPLY/${this.player.id}/CONTROLLER`);
   }
 }

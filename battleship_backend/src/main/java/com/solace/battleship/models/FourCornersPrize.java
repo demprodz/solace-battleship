@@ -2,6 +2,7 @@ package com.solace.battleship.models;
 
 public class FourCornersPrize implements IPrize {
     private int numPrizes;
+    private int numClaimedPrizes;
     private boolean isTaken;
 
     public FourCornersPrize() {
@@ -9,6 +10,7 @@ public class FourCornersPrize implements IPrize {
 
     public FourCornersPrize(int numPrizes) {
         this.numPrizes = numPrizes;
+        this.numClaimedPrizes = 0;
     }
 
     public String getPrizeName() {
@@ -39,9 +41,9 @@ public class FourCornersPrize implements IPrize {
         }
 
         if (markedSpots[0][0] && markedSpots[0][4] && markedSpots[2][0] && markedSpots[2][4]) {
-            numPrizes--;
+            numClaimedPrizes++;
 
-            if (numPrizes == 0) {
+            if (numPrizes == numClaimedPrizes) {
                 isTaken = true;
             }
 
@@ -57,6 +59,10 @@ public class FourCornersPrize implements IPrize {
 
     public void setNumPrizes(int numPrizes) {
         this.numPrizes = numPrizes;
+    }
+
+    public int getNumClaimedPrizes() {
+        return this.numClaimedPrizes;
     }
 
     public boolean getIsTaken() {

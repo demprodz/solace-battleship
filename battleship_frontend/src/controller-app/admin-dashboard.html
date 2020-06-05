@@ -2,24 +2,65 @@
   <require from="./dashboard-board"></require>
   <require from="../common/scoreboard"></require>
   <div class="flex-column align__center w-100 h-100">
-    <div show.bind="pageState ==='WAITING_STATE'" class="margin-top-10px w-100 message-container">Click Next to draw a number</div>
-    <div show.bind="pageState !=='WAITING_STATE'" class="margin-top-10px w-100 message-container">${currentNumber} was drawn</div>
-    <div class="board__container">
-      <div repeat.for="row of gameNumberSet.numberSet.length" class="board__row">
-        <div
-          repeat.for="column of gameNumberSet.numberSet[0].length"
-          class="${gameNumberSet.numberSet[$parent.row][column].isMarked == true ? 'master_board_square marked__tile' : 'master_board_square'}"
-        >
-          ${gameNumberSet.numberSet[$parent.row][column].value}
+    <div show.bind="pageState ==='GAME_OVER_STATE'" class="margin-top-10px w-100 message-container">Game over</div>
+    <div class="main_section">
+      <div class="side_sectional">
+        <div class="dashboard_prize_section">
+          <div class="prize_options_section">
+            <div repeat.for="i of prizes.length" class="dashboard-prize ${prizes[i].isTaken !== true ? 'pattern_available' : 'pattern_not_available'}">
+              <div class="prize_option_name">${prizes[i].prizeName}</div>
+              <div class="prize_option_number">${prizes[i].numClaimedPrizes}/${prizes[i].numPrizes}</div>
+            </div>
+          </div>
         </div>
       </div>
-      <br />
-    </div>
-    <div class="flex justify__flex-end margin-top-10px">
-      <button class="landing-page__nav-button margin-top-10px margin-right-10px" click.delegate="isGameOver !== true && autoMode == false ? chooseNextNumberEvent() : null">Next</button>
-      <button class="landing-page__nav-button margin-top-10px margin-left-10px ${autoMode == true ? 'blue' : 'grey'}" click.trigger="toggleAutoMode()">
-        ${autoMode == true ? "Auto Mode On" : "Auto Mode Off"}
-      </button>
+      <div class="mid_sectional">
+        <div class="base-timer">
+          <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <g class="base-timer__circle">
+              <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45" />
+              <path
+                id="base-timer-path-remaining"
+                stroke-dasharray="283"
+                class="base-timer__path-remaining green"
+                d="
+          M 50, 50
+          m -45, 0
+          a 45,45 0 1,0 90,0
+          a 45,45 0 1,0 -90,0
+        "
+              ></path>
+            </g>
+          </svg>
+          <span class="base-timer__label main_number_section" id="base-time-label"> ${currentNumber} </span>
+          <span>
+            <!-- Remaining time label -->
+          </span>
+        </div>
+        <div class="action-section margin-top-10px">
+          <button
+            class="landing-page__nav-button button-styling margin-top-10px margin-right-10px"
+            click.delegate="pageState !=='GAME_OVER_STATE' && autoMode == false ? chooseNextNumberEvent() : null"
+          >
+            Next
+          </button>
+          <button class="landing-page__nav-button cancel-button-styling margin-top-10px margin-left-10px ${autoMode == true ? 'blue' : ''}" click.trigger="toggleAutoMode()">
+            ${autoMode == true ? "Auto Mode On" : "Auto Mode Off"}
+          </button>
+        </div>
+      </div>
+      <div class="side_sectional">
+        <div class="board__container">
+          <div repeat.for="row of gameNumberSet.numberSet[0].length" class="board__row">
+            <div
+              repeat.for="column of gameNumberSet.numberSet.length"
+              class="${gameNumberSet.numberSet[column][$parent.row].isMarked == true ? 'master_board_square marked__tile' : 'master_board_square'}"
+            >
+              ${gameNumberSet.numberSet[column][$parent.row].value}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

@@ -1,10 +1,22 @@
-import { TileSelectEvent, TileSelectResult, Ticket, NextNumberChooseResult, PrizeSubmitEvent, IPrize, PrizeSubmitResult } from "./../common/events";
-import { WAITING_STATE, IN_PROGRESS_STATE } from "./../common/constants";
+import {
+  TileSelectEvent,
+  TileSelectResult,
+  Ticket,
+  NextNumberChooseResult,
+  PrizeSubmitEvent,
+  IPrize,
+  PrizeSubmitResult,
+  PlayerPageRequest,
+  PlayerPageReloadResult,
+  PrizeStatusResult,
+} from "./../common/events";
+import { WAITING_STATE, IN_PROGRESS_STATE, GAME_OVER_STATE } from "./../common/constants";
 import { bindable, inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "common/solace-client";
 import { BoardSetEvent, Player, PlayerName, PrivateBoardCellState, KnownBoardCellState, TopicHelper, BoardSetResult, GameStart } from "../common/events";
 import { GameParams } from "common/game-params";
+import "./housie-table.css";
 
 /**
  * Responsible for setting the board
@@ -24,21 +36,39 @@ export class HousieTable {
   @bindable
   private selectTicketMode: boolean;
 
+  @bindable
   private tickets: Ticket[];
-  private placedShips: number = 0;
+
   private countdown: number = 0;
-  private donePlacing: boolean = false;
   private error: string = "";
+  private playerId: string;
+  private sessionName: string;
+  private sessionId: string;
 
-  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private gameParams: GameParams, private topicHelper: TopicHelper) {
-    console.log(player);
-    this.tickets = this.player.ticketSet.tickets;
+  constructor(private router: Router, private solaceClient: SolaceClient, private player: Player, private gameParams: GameParams, private topicHelper: TopicHelper) {}
 
+  activate(params, routeConfig) {
+    this.sessionId = params.sessionId;
+    this.playerId = params.playerId;
+
+    if (this.solaceClient.session == null) {
+      //Connect to Solace
+      this.solaceClient.connect().then(() => {
+        this.reloadPlayerPageFromServer();
+      });
+    } else {
+      this.reloadPlayerPageFromServer();
+      // this.prepareSolaceSubscriptions();
+      // this.tickets = this.player.ticketSet.tickets;
+    }
+  }
+
+  prepareSolaceSubscriptions() {
     //WARM-UP THE TILE-SELECT-REPLY SUBSCRIPTION
-    this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/TILE-SELECT-REPLY/${this.player.getPlayerIdForTopic()}/CONTROLLER`);
+    this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/TILE-SELECT-REPLY/${this.player.id}/CONTROLLER`);
 
     //WARM-UP THE PRIZE-SUBMIT-REPLY SUBSCRIPTION
-    this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/PRIZE-SUBMIT-REPLY/${this.player.getPlayerIdForTopic()}/CONTROLLER`);
+    this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/PRIZE-SUBMIT-REPLY/${this.player.id}/CONTROLLER`);
 
     //Subscribe to the GAME-START event
     this.solaceClient.subscribe(
@@ -64,6 +94,10 @@ export class HousieTable {
         let nextNumberChooseResult: NextNumberChooseResult = JSON.parse(msg.getBinaryAttachment());
         if (nextNumberChooseResult.success) {
           this.currentNumber = nextNumberChooseResult.value;
+
+          if (nextNumberChooseResult.isGameOver) {
+            this.pageState = GAME_OVER_STATE;
+          }
         } else {
           this.error = nextNumberChooseResult.returnMessage;
         }
@@ -75,13 +109,46 @@ export class HousieTable {
       `${this.topicHelper.prefix}/UPDATE-PRIZE-STATUS/CONTROLLER`,
       // game start event handler callback
       (msg) => {
-        let prizes: IPrize[] = JSON.parse(msg.getBinaryAttachment());
-        console.log(prizes);
-        if (prizes != null) {
-          this.prizes = prizes;
+        let prizeStatusResult: PrizeStatusResult = JSON.parse(msg.getBinaryAttachment());
+
+        if (prizeStatusResult != null) {
+          this.prizes = prizeStatusResult.prizes;
+
+          if (prizeStatusResult.isGameOver) {
+            this.pageState = GAME_OVER_STATE;
+          }
         }
       }
     );
+  }
+
+  reloadPlayerPageFromServer() {
+    let playerPageRequest: PlayerPageRequest = new PlayerPageRequest();
+    playerPageRequest.sessionId = this.sessionId;
+    playerPageRequest.playerId = this.playerId;
+
+    //WARM-UP THE PLAYER-PAGE-REPLY SUBSCRIPTION
+    this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/PLAYER-PAGE-REPLY/${this.playerId}/CONTROLLER`);
+
+    //Send the request to get player status (upon refresh)
+    this.solaceClient
+      .sendRequest(`${this.topicHelper.prefix}/PLAYER-PAGE-REQUEST/${this.playerId}`, JSON.stringify(playerPageRequest), `${this.topicHelper.prefix}/PLAYER-PAGE-REPLY/${this.playerId}/CONTROLLER`)
+      .then((msg: any) => {
+        let playerPageReloadResult: PlayerPageReloadResult = JSON.parse(msg.getBinaryAttachment());
+        if (playerPageReloadResult.success) {
+          this.player = playerPageReloadResult.player;
+          this.tickets = this.player.ticketSet.tickets;
+          this.sessionName = playerPageReloadResult.sessionName;
+
+          this.pageState = playerPageReloadResult.isGameStarted ? IN_PROGRESS_STATE : WAITING_STATE;
+          this.prizes = playerPageReloadResult.prizes;
+        }
+
+        this.prepareSolaceSubscriptions();
+      })
+      .catch((err) => {
+        this.error = err;
+      });
   }
 
   loading(callback) {
@@ -112,11 +179,7 @@ export class HousieTable {
 
     //Send the request to set the board
     this.solaceClient
-      .sendRequest(
-        `${this.topicHelper.prefix}/TILE-SELECT-REQUEST/${this.player.getPlayerIdForTopic()}`,
-        JSON.stringify(tileSelectEvent),
-        `${this.topicHelper.prefix}/TILE-SELECT-REPLY/${this.player.getPlayerIdForTopic()}/CONTROLLER`
-      )
+      .sendRequest(`${this.topicHelper.prefix}/TILE-SELECT-REQUEST/${this.player.id}`, JSON.stringify(tileSelectEvent), `${this.topicHelper.prefix}/TILE-SELECT-REPLY/${this.player.id}/CONTROLLER`)
       .then((msg: any) => {
         let tileSelectResult: TileSelectResult = JSON.parse(msg.getBinaryAttachment());
         if (!tileSelectResult.success) {
@@ -149,8 +212,6 @@ export class HousieTable {
   }
 
   submitPrizeRequest(ticket: number) {
-    console.log(ticket);
-
     let prizeSubmitEvent: PrizeSubmitEvent = new PrizeSubmitEvent();
     prizeSubmitEvent.sessionId = this.player.sessionId;
     prizeSubmitEvent.playerId = this.player.id;
@@ -158,11 +219,7 @@ export class HousieTable {
     prizeSubmitEvent.selectedPrizeIndex = this.selectedPrizeIndex;
 
     this.solaceClient
-      .sendRequest(
-        `${this.topicHelper.prefix}/PRIZE-SUBMIT-REQUEST/${this.player.getPlayerIdForTopic()}`,
-        JSON.stringify(prizeSubmitEvent),
-        `${this.topicHelper.prefix}/PRIZE-SUBMIT-REPLY/${this.player.getPlayerIdForTopic()}/CONTROLLER`
-      )
+      .sendRequest(`${this.topicHelper.prefix}/PRIZE-SUBMIT-REQUEST/${this.player.id}`, JSON.stringify(prizeSubmitEvent), `${this.topicHelper.prefix}/PRIZE-SUBMIT-REPLY/${this.player.id}/CONTROLLER`)
       .then((msg: any) => {
         let prizeSubmitResult: PrizeSubmitResult = JSON.parse(msg.getBinaryAttachment());
         console.log(prizeSubmitResult);
@@ -186,7 +243,15 @@ export class HousieTable {
   }
 
   detached() {
-    //Unsubscribe from the .../BOARD-SET-REPLY event
+    //Unsubscribe from the .../GAMESTART-REPLY event
     this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAMESTART-REPLY/CONTROLLER`);
+    //Unsubscribe from the .../NEXTNUMBER-CHOOSE-REPLY event
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/NEXTNUMBER-CHOOSE-REPLY/CONTROLLER`);
+    //Unsubscribe from the .../UPDATE-PRIZE-STATUS event
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/UPDATE-PRIZE-STATUS/CONTROLLER`);
+    //Unsubscribe from the .../TILE-SELECT-REPLY event
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/TILE-SELECT-REPLY/CONTROLLER`);
+    //Unsubscribe from the .../PRIZE-SUBMIT-REPLY event
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/PRIZE-SUBMIT-REPLY/CONTROLLER`);
   }
 }

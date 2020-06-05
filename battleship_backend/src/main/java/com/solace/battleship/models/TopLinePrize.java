@@ -2,6 +2,7 @@ package com.solace.battleship.models;
 
 public class TopLinePrize implements IPrize {
     private int numPrizes;
+    private int numClaimedPrizes;
     private boolean isTaken;
 
     public TopLinePrize() {
@@ -9,6 +10,7 @@ public class TopLinePrize implements IPrize {
 
     public TopLinePrize(int numPrizes) {
         this.numPrizes = numPrizes;
+        this.numClaimedPrizes = 0;
     }
 
     public String getPrizeName() {
@@ -35,9 +37,9 @@ public class TopLinePrize implements IPrize {
         }
 
         if (markedSpots == 5) {
-            numPrizes--;
+            numClaimedPrizes++;
 
-            if (numPrizes == 0) {
+            if (numPrizes == numClaimedPrizes) {
                 isTaken = true;
             }
 
@@ -53,6 +55,10 @@ public class TopLinePrize implements IPrize {
 
     public void setNumPrizes(int numPrizes) {
         this.numPrizes = numPrizes;
+    }
+
+    public int getNumClaimedPrizes() {
+        return this.numClaimedPrizes;
     }
 
     public boolean getIsTaken() {

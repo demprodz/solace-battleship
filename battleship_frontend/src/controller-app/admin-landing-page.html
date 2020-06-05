@@ -1,0 +1,34 @@
+<template>
+  <require from="./player-qr"></require>
+  <div class="flex-column justify__center w-100 h-100">
+    <div class="main_section">
+      <div class="side_sectional">
+        <div class="players_message">${playersList.length} ${playersMessage}</div>
+        <ul class="">
+          <li repeat.for="i of playersList.length" class="">
+            <div>${playersList[i]}</div>
+          </li>
+        </ul>
+      </div>
+      <div class="mid_sectional">
+        <div class="game_title_section">${sessionSummary.name}</div>
+        <div class="invite_link_section">
+          <input class="link_box" value="${playerJoinUrl}" readonly/>
+          <button class="copy_link_button button-styling" click.trigger="copyUrlToClipboard()">${copyToClipboardMessage}</button>
+        </div>
+        <div class="prizes_section margin-top-20px">Prizes
+        <div class="prizes_list_section">
+          <div repeat.for="i of sessionSummary.prizes.length" class="prize_box">
+            ${sessionSummary.prizes[i].prizeName}
+          </div></div>
+        </div>
+        <div class="flex justify__center margin-top-10px">
+          <button class="landing-page__nav-button button-styling margin-top-10px" click.trigger="startGame()">Start Game</button>
+        </div>
+      </div>
+      <div class="side_sectional"></div>
+    </div>
+  </div>
+
+  </div>
+</template>

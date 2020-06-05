@@ -1,12 +1,12 @@
 <template>
   <div class="landing-page__container">
-    <div class="flex-column padding-20px">
-      <label>Enter a player nickname: </label>
-      <input class="margin-top-10px" type="text" value.two-way="playerNickname" size="3" />
-      <label>Enter number of tickets: </label>
-      <input class="margin-top-10px" type="number" value.two-way="numTickets" size="3" min="1" max="6" />
-      <div class="flex justify__flex-end margin-top-10px">
-        <button class="landing-page__nav-button margin-top-10px" click.trigger="joinGame()">Next</button>
+    <div class="centered_container margin-top-100px">
+      <label class="game-message">Name: </label><br />
+      <input class="link_box margin-top-10px" type="text" value.two-way="playerNickname" size="3" /><br /><br />
+      <label class="game-message">Number of tickets: </label><br />
+      <input class="link_box margin-top-10px" type="number" value.two-way="numTickets" size="3" min="1" max="6" />
+      <div class="flex justify__center margin-top-10px">
+        <button class="landing-page__nav-button button-styling margin-top-10px" click.trigger="joinGame()">Join</button>
       </div>
     </div>
   </div>

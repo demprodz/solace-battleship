@@ -1,3 +1,4 @@
+import { AdminLandingPage } from "./../controller-app/admin-landing-page";
 /**
  * This shared library represents all the events and event related objects that are available to the battleship application
  */
@@ -15,6 +16,50 @@ export class TopicHelper {
 }
 
 export type PlayerName = "player1" | "player2";
+
+export class Session {
+  name: string;
+  joinUrl: string;
+}
+
+export class SessionCreateRequest {
+  name: string;
+  sessionId: string;
+  playerJoinUrl: string;
+}
+
+export class SessionCreateResult {
+  success: boolean;
+  sessionSummary: SessionSummary;
+}
+
+export class SearchSessionRequest {
+  sessionId: string;
+}
+
+export class SearchSessionResult {
+  sessionId: string;
+  success: boolean;
+  errorMessage: string;
+}
+
+export class LobbyPageRequest {}
+
+export class LobbyPageReloadResult {
+  success: boolean;
+  sessions: Map<String, SessionSummary>;
+}
+
+export class SessionSummary {
+  sessionId: string;
+  name: string;
+  playerJoinUrl: string;
+  players: { [key: string]: Player };
+  numPlayers: number;
+  prizes: IPrize[];
+  isGameInProgress: boolean;
+}
+
 /**
  * Object that represents the player in a game
  * name: name of the player
@@ -26,24 +71,43 @@ export type PlayerName = "player1" | "player2";
  */
 export class Player {
   id: string;
-  name: PlayerName;
-  nickname: string;
-  internalBoardState: PrivateBoardCellState[][];
-  publicBoardState: KnownBoardCellState[][];
+  name: string;
   sessionId: string;
-  isTurn: boolean;
   ticketSet: TicketSet;
   numTickets: number;
+}
 
-  getOtherPlayerNameForTopic(): string {
-    if (this.name == "player1") return "PLAYER2";
-    else return "PLAYER1";
-  }
+export class PlayerPageRequest {
+  sessionId: string;
+  playerId: string;
+}
 
-  getPlayerIdForTopic(): string {
-    return this.id;
-    // return this.name.toUpperCase();
-  }
+export class PlayerPageReloadResult {
+  sessionName: string;
+  player: Player;
+  isGameStarted: boolean;
+  prizes: IPrize[];
+  success: boolean;
+}
+
+export class AdminDashboardPageRequest {
+  sessionId: string;
+}
+
+export class AdminDashboardPageReloadResult {
+  isGameInProgress: boolean;
+  gameNumberSet: GameNumberSet;
+  prizes: IPrize[];
+  success: boolean;
+}
+
+export class AdminLandingPageRequest {
+  sessionId: string;
+}
+
+export class AdminLandingPageReloadResult {
+  sessionSummary: SessionSummary;
+  success: boolean;
 }
 
 /**
@@ -89,7 +153,13 @@ export class IPrize {
   abbreviatedName: string;
   description: string;
   numPrizes: number;
+  numClaimedPrizes: number;
   isTaken: boolean;
+}
+
+export class PrizeStatusResult {
+  prizes: IPrize[];
+  isGameOver: boolean;
 }
 
 export class NextNumberChooseEvent {

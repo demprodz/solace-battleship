@@ -2,6 +2,7 @@ package com.solace.battleship.models;
 
 public class FullHousePrize implements IPrize {
     private int numPrizes;
+    private int numClaimedPrizes;
     private boolean isTaken;
 
     public FullHousePrize() {
@@ -9,6 +10,7 @@ public class FullHousePrize implements IPrize {
 
     public FullHousePrize(int numPrizes) {
         this.numPrizes = numPrizes;
+        this.numClaimedPrizes = 0;
     }
 
     public String getPrizeName() {
@@ -37,9 +39,9 @@ public class FullHousePrize implements IPrize {
         }
 
         if (markedSpots == 15) {
-            numPrizes--;
+            numClaimedPrizes++;
 
-            if (numPrizes == 0) {
+            if (numPrizes == numClaimedPrizes) {
                 isTaken = true;
             }
 
@@ -59,6 +61,10 @@ public class FullHousePrize implements IPrize {
 
     public boolean getIsTaken() {
         return this.isTaken;
+    }
+
+    public int getNumClaimedPrizes() {
+        return this.numClaimedPrizes;
     }
 
     public void setIsTaken(boolean isTaken) {

@@ -1,0 +1,36 @@
+<template>
+  <div class="landing-page__container">
+    <div class="centered_container margin-top-100px">
+      <label class="game-message">Enter a game code: </label><br />
+      <div class="invite_link_section">
+      <input class="link_box margin-top-10px" type="text" value.two-way="searchSessionCode" size="3" />
+      <button class="join-game-button button-styling" click.trigger="searchGame()">Search</button>
+      </div>
+      <br/>
+      <div class="game-message">OR</div>
+      <label class="game-message">Join an existing game: </label><br />
+      <table class="lobby-table">
+        <tr class="lobby-table-row">
+          <th class="code-col">Code</th>
+          <th class="title-col">Title</th>
+          <th class="players-col">Players</th>
+          <th class="prizes-col">Prizes</th>
+          <th class-"action-col">Action</th>
+        </tr>
+        <tr class="lobby-table-row" repeat.for="[sessionId, sessionSummary] of games">
+          <td class="code-col">${sessionSummary.sessionId}</td>
+          <td class="title-col">${sessionSummary.name}</td>
+          <td class="players-col">${sessionSummary.numPlayers}</td>
+          <td class="prizes-col">
+            <div repeat.for="i of sessionSummary.prizes.length" class="winning_pattern pattern_available">
+              ${sessionSummary.prizes[i].abbreviatedName}
+            </div>
+          </td>
+          <td class-"action-col">
+            <button class="join-game-button button-styling" click.trigger="joinGame(sessionId)">Join</button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</template>

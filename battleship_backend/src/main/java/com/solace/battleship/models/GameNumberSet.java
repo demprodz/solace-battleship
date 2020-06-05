@@ -51,6 +51,16 @@ public class GameNumberSet {
         return prizes;
     }
 
+    public boolean isAllPrizesTaken() {
+        for (int i = 0; i < prizes.length; i++) {
+            if (!prizes[i].getIsTaken()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private void initialize() {
         numberSet = new HousieNumber[9][10];
 

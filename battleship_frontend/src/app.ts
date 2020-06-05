@@ -1,3 +1,4 @@
+import { TOPIC_PREFIX } from "./common/constants";
 import { TopicHelper } from "./common/events";
 import { gameConfig } from "./common/game-config";
 import { PLATFORM } from "aurelia-pal";
@@ -20,51 +21,23 @@ export class App {
     gameParams.numRows = gameConfig.numRows;
     gameParams.numColumns = gameConfig.numColumns;
     //Initializing the TopicPrefix with
-    topicHelper.prefix = "SOLACE/BATTLESHIP";
+    topicHelper.prefix = TOPIC_PREFIX;
   }
 
   configureRouter(config, router) {
-    config.title = "Battleship";
+    config.title = "Housie";
     config.options.pushState = true; // No # in URL
     config.map([
       { route: "/", moduleId: PLATFORM.moduleName("controller-app/landing-page"), name: "" },
-      {
-        route: "/join/:sessionId",
-        moduleId: PLATFORM.moduleName("player-app/join"),
-        name: "join",
-      },
-      {
-        route: "/board-set",
-        moduleId: PLATFORM.moduleName("player-app/board-set"),
-        name: "board-set",
-      },
-      {
-        route: "/housie-table",
-        moduleId: PLATFORM.moduleName("player-app/housie-table"),
-        name: "housie-table",
-      },
-      {
-        route: "/admin-dashboard",
-        moduleId: PLATFORM.moduleName("controller-app/admin-dashboard"),
-        name: "admin-dashboard",
-      },
-      {
-        route: "/match",
-        moduleId: PLATFORM.moduleName("player-app/match"),
-        name: "match",
-      },
-      {
-        route: "/dashboard",
-        moduleId: PLATFORM.moduleName("controller-app/dashboard"),
-        name: "dashboard",
-      },
-      {
-        route: "/game-over/:msg",
-        moduleId: PLATFORM.moduleName("player-app/game-over"),
-        name: "game-over",
-      },
+      { route: "/lobby", moduleId: PLATFORM.moduleName("player-app/lobby"), name: "lobby" },
+      { route: "/admin/:sessionId", moduleId: PLATFORM.moduleName("./admin-view"), name: "admin" },
+      { route: "/player/:sessionId", moduleId: PLATFORM.moduleName("./player-view"), name: "player" },
     ]);
     this.router = router;
+  }
+
+  goHome() {
+    window.location.href = "/";
   }
 
   attached() {

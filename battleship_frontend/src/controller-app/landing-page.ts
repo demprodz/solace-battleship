@@ -1,4 +1,17 @@
-import { PlayerJoined, GameStart, TopicHelper, BoardSetEvent, MatchStart, BoardSetResult, GameStartRequest, GameNumberSet, JoinResult } from "../common/events";
+import { TOPIC_PREFIX } from "./../common/constants";
+import {
+  PlayerJoined,
+  GameStart,
+  TopicHelper,
+  BoardSetEvent,
+  MatchStart,
+  BoardSetResult,
+  GameStartRequest,
+  GameNumberSet,
+  JoinResult,
+  SessionCreateRequest,
+  SessionCreateResult,
+} from "../common/events";
 import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "common/solace-client";
@@ -19,12 +32,10 @@ export class LandingPage {
   private countdown: number = 0;
 
   //Generate a session-id for the game (a random hex string)
-  sessionId: string = "test"; //Math.floor(Math.random() * 16777215).toString(16);
+  sessionId: string = Math.floor(Math.random() * 16777215).toString(16);
 
   constructor(private router: Router, private solaceClient: SolaceClient, private topicHelper: TopicHelper, private gameStart: GameStart, private gameNumberSet: GameNumberSet) {
-    //Append a session-id for the global topic prefix
-    this.topicHelper.prefix = this.topicHelper.prefix + "/" + this.sessionId;
-    this.playerJoinUrl = `http://${location.host}/join/${this.sessionId}/`;
+    this.playerJoinUrl = `http://${location.host}/player/${this.sessionId}/`;
     this.numPlayers = 0;
   }
 
@@ -34,74 +45,73 @@ export class LandingPage {
    * @param routeConfig
    */
   activate(params, routeConfig) {
+    this.topicHelper.prefix = TOPIC_PREFIX;
+
     // Connect to Solace
-    this.solaceClient.connect().then(() => {
-      //Warm up the subscription for the GAMESTART-REPLY
-      this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/GAMESTART-REPLY/CONTROLLER`);
-      //Listener for join replies from the battleship-server
-      this.solaceClient.subscribe(
-        `${this.topicHelper.prefix}/JOIN-REPLY/*/CONTROLLER`,
-        // join event handler callback
-        (msg) => {
-          if (msg.getBinaryAttachment()) {
-            // parse received event
-            let joinResult: JoinResult = JSON.parse(msg.getBinaryAttachment());
-            if (joinResult.success) {
-              // update client statuses
-              this.playersMessage = ++this.numPlayers + " player(s) have joined.";
-              this.playersList.push(joinResult.playerNickname);
-            }
+    if (this.solaceClient.session == null) {
+      this.solaceClient.connect().then(() => {
+        this.prepareSolaceSubscriptions();
+      });
+    } else {
+      this.prepareSolaceSubscriptions();
+    }
+  }
+
+  prepareSolaceSubscriptions() {
+    this.solaceClient.subscribeReply(`${this.topicHelper.prefix}/SESSION-CREATE-REPLY/${this.sessionId}/CONTROLLER`);
+
+    //Listener for join replies from the battleship-server
+    this.solaceClient.subscribe(
+      `${this.topicHelper.prefix}/JOIN-REPLY/*/CONTROLLER`,
+      // join event handler callback
+      (msg) => {
+        if (msg.getBinaryAttachment()) {
+          // parse received event
+          let joinResult: JoinResult = JSON.parse(msg.getBinaryAttachment());
+          if (joinResult.success) {
+            // update client statuses
+            this.playersMessage = ++this.numPlayers + " player(s) have joined.";
+            this.playersList.push(joinResult.playerNickname);
           }
         }
-      );
-    });
-  }
-
-  startGame() {
-    let gameStartRequest: GameStartRequest = new GameStartRequest();
-    // playerJoined.playerName = this.player.name;
-    gameStartRequest.sessionId = this.sessionId;
-
-    let topicName: string = `${this.topicHelper.prefix}/GAMESTART-REQUEST`;
-    let replyTopic: string = `${this.topicHelper.prefix}/GAMESTART-REPLY/CONTROLLER`;
-    this.solaceClient
-      .sendRequest(topicName, JSON.stringify(gameStartRequest), replyTopic)
-      .then((msg: any) => {
-        let gameStartReply: GameStart = JSON.parse(msg.getBinaryAttachment());
-
-        if (gameStartReply.success) {
-          this.pageState = "Game is beginning...";
-          this.gameStart.sessionId = gameStartReply.sessionId;
-          this.gameNumberSet.numberSet = gameStartReply.gameNumberSet.numberSet;
-          this.gameNumberSet.prizes = gameStartReply.gameNumberSet.prizes;
-          this.gameNumberSet.numbersLeft = gameStartReply.gameNumberSet.numbersLeft;
-
-          this.loading(() => {
-            this.router.navigateToRoute("admin-dashboard");
-          });
-        } else this.pageState = "Game failed to start!";
-      })
-      .catch((error) => {
-        this.pageState = "Game failed to start!";
-      });
-  }
-
-  loading(callback) {
-    var timeleft = 3;
-    var downloadTimer = setInterval(() => {
-      if (timeleft <= 0) {
-        clearInterval(downloadTimer);
-        callback();
       }
-      this.countdown += 1;
-      timeleft -= 1;
-    }, 1000);
+    );
+  }
+
+  createGame() {
+    let sessionName: string = prompt("Enter a name for your new game:");
+
+    if (sessionName == null) {
+      return;
+    }
+
+    let sessionCreateRequest: SessionCreateRequest = new SessionCreateRequest();
+    sessionCreateRequest.sessionId = this.sessionId;
+    sessionCreateRequest.name = sessionName;
+    sessionCreateRequest.playerJoinUrl = `http://${location.host}/player/${this.sessionId}/`;
+
+    let topicName: string = `${this.topicHelper.prefix}/SESSION-CREATE-REQUEST`;
+    let replyTopic: string = `${this.topicHelper.prefix}/SESSION-CREATE-REPLY/${this.sessionId}/CONTROLLER`;
+    this.solaceClient
+      .sendRequest(topicName, JSON.stringify(sessionCreateRequest), replyTopic)
+      .then((msg: any) => {
+        let sessionCreateResult: SessionCreateResult = JSON.parse(msg.getBinaryAttachment());
+        console.log(sessionCreateResult);
+        if (sessionCreateResult.success) {
+          this.router.navigateToRoute("admin", { sessionId: this.sessionId });
+        }
+      })
+      .catch(() => {});
+  }
+
+  joinGame() {
+    this.router.navigateToRoute("lobby");
   }
 
   detached() {
     //Unsubscribe from the ../JOIN-REQUEST/* event
     this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/JOIN-REPLY/*/CONTROLLER`);
     //Unsubscribe from the ../GAME-START/CONTROLLER event
-    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/GAMESTART-REPLY/CONTROLLER`);
+    this.solaceClient.unsubscribe(`${this.topicHelper.prefix}/SESSION-CREATE-REPLY/${this.sessionId}/CONTROLLER`);
   }
 }

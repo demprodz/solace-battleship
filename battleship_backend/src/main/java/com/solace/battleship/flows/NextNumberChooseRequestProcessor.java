@@ -25,8 +25,8 @@ public class NextNumberChooseRequestProcessor extends AbstractRequestProcessor<N
   @StreamListener(NextNumberChooseRequestProcessorBinding.INPUT)
 
   public void handle(NextNumberChooseRequest nextNumberChooseRequest, @Header("reply-to") String replyTo) {
-    NextNumberChooseResult gameStart = gameEngine.getNextNumber(nextNumberChooseRequest.getSessionId());
-    resolver.resolveDestination(replyTo).send(message(gameStart));
+    NextNumberChooseResult nextNumberChooseResult = gameEngine.getNextNumber(nextNumberChooseRequest.getSessionId());
+    resolver.resolveDestination(replyTo).send(message(nextNumberChooseResult));
   }
 
   /*

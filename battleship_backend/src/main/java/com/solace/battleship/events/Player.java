@@ -1,7 +1,5 @@
 package com.solace.battleship.events;
 
-import java.util.Objects;
-
 import com.solace.battleship.models.TicketSet;
 
 /**
@@ -10,13 +8,45 @@ import com.solace.battleship.models.TicketSet;
  * @author Andrew Roberts, Thomas Kunnumpurath
  */
 public class Player {
-
-    private PlayerName name;
-    private String nickname;
-    private PrivateBoardCellState[][] internalBoardState;
-    private KnownBoardCellState[][] publicBoardState;
-    private boolean isTurn;
+    private String id;
+    private String name;
+    private String sessionId;
     private TicketSet ticketSet;
+    private int numTickets;
+
+    public Player(String sessionId, String id, String name, TicketSet ticketSet, int numTickets) {
+        this.sessionId = sessionId;
+        this.id = id;
+        this.name = name;
+        this.ticketSet = ticketSet;
+        this.numTickets = numTickets;
+    }
+
+    public String getSessionId() {
+        return this.sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public int getNumTickets() {
+        return this.numTickets;
+    }
+
+    public void setNumTickets(int numTickets) {
+        this.numTickets = numTickets;
+    }
+
+    public Player sessionId(String sessionId) {
+        this.sessionId = sessionId;
+        return this;
+    }
+
+    public Player numTickets(int numTickets) {
+        this.numTickets = numTickets;
+        return this;
+    }
 
     public TicketSet getTicketSet() {
         return ticketSet;
@@ -26,100 +56,34 @@ public class Player {
         this.ticketSet = ticketSet;
     }
 
-    public PlayerName getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(PlayerName name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getId() {
+        return this.id;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public PrivateBoardCellState[][] getInternalBoardState() {
-        return internalBoardState;
+    public Player id(String id) {
+        this.id = id;
+        return this;
     }
 
-    public void setInternalBoardState(PrivateBoardCellState[][] internalBoardState) {
-        this.internalBoardState = internalBoardState;
-    }
-
-    public KnownBoardCellState[][] getPublicBoardState() {
-        return publicBoardState;
-    }
-
-    public void setPublicBoardState(KnownBoardCellState[][] publicBoardState) {
-        this.publicBoardState = publicBoardState;
-    }
-
-    public boolean isTurn() {
-        return isTurn;
-    }
-
-    public void setTurn(boolean turn) {
-        isTurn = turn;
-    }
-
-    public Player() {
-        KnownBoardCellState[][] tmpArray = new KnownBoardCellState[5][5];
-        for (int i = 0; i < tmpArray.length; i++) {
-            for (int j = 0; j < tmpArray.length; j++) {
-                tmpArray[i][j] = KnownBoardCellState.empty;
-            }
-        }
-        this.publicBoardState = tmpArray;
-    }
-
-    public Player(PlayerName name, String nickname, PrivateBoardCellState[][] internalBoardState,
-            KnownBoardCellState[][] publicBoardState, boolean isTurn) {
+    public Player name(String name) {
         this.name = name;
-        this.nickname = nickname;
-        this.internalBoardState = internalBoardState;
-        this.publicBoardState = publicBoardState;
-        this.isTurn = isTurn;
+        return this;
     }
 
-    public boolean isIsTurn() {
-        return this.isTurn;
+    public Player ticketSet(TicketSet ticketSet) {
+        this.ticketSet = ticketSet;
+        return this;
     }
-
-    public boolean getIsTurn() {
-        return this.isTurn;
-    }
-
-    public void setIsTurn(boolean isTurn) {
-        this.isTurn = isTurn;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof Player)) {
-            return false;
-        }
-        Player player = (Player) o;
-        return Objects.equals(name, player.name) && Objects.equals(nickname, player.nickname)
-                && Objects.equals(internalBoardState, player.internalBoardState)
-                && Objects.equals(publicBoardState, player.publicBoardState) && isTurn == player.isTurn;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, nickname, internalBoardState, publicBoardState, isTurn);
-    }
-
-    @Override
-    public String toString() {
-        return "{" + " name='" + getName() + "'" + ", nickname='" + getNickname() + "'" + ", internalBoardState='"
-                + getInternalBoardState() + "'" + ", publicBoardState='" + getPublicBoardState() + "'" + ", isTurn='"
-                + isIsTurn() + "'" + "}";
-    }
-
 }

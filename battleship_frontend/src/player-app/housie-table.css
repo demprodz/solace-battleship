@@ -1,0 +1,28 @@
+.player_section {
+  font: var(--subtitle-text-font);
+  color: var(--soft-white);
+}
+
+.prize_section {
+  width: 350px;
+  margin: 0 auto;
+}
+
+.prize_section_half {
+  display: inline-block;
+  width: calc(95% / 2);
+  vertical-align: top;
+}
+
+.housie-table__nav-button {
+  width: 150px;
+  height: 100px;
+  padding: 20px;
+  vertical-align: top;
+  margin: 10px;
+}
+
+.sectional_sticky {
+  position: sticky;
+  top: 200px;
+}

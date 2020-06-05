@@ -19,6 +19,8 @@ public class NextNumberChooseResult {
     }
 
     public NextNumberChooseResult() {
+        success = false;
+        isGameOver = true;
     }
 
     public NextNumberChooseResult(int value, int rowIndex, int columnIndex, boolean isGameOver) {

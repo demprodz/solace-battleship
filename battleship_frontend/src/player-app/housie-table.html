@@ -1,37 +1,63 @@
 <template>
   <div class="flex-column justify__center w-100 h-100">
-    <div class="board__playerHeader">${player.nickname}</div>
-    <br />
-    <br />
-    <div show.bind="pageState ==='WAITING_STATE'" class="flex-column padding-20px align__center">
-      <p>The game will begin shortly...</p>
-      <progress value.bind="countdown" max="3" id="progressBar"></progress>
-    </div>
-    <div show.bind="pageState !=='WAITING_STATE'" class="margin-top-10px w-100 message-container">${currentNumber} was drawn</div>
     <div class="main_section">
-      <div class="side_sectional"></div>
-      <div class="board__container">
-        <div
-          repeat.for="ticket of player.numTickets"
-          class="housie__container ${selectTicketMode === true ? 'select_ticket_mode_on' : ''} ${tickets[ticket].isEliminated === true ? 'eliminated_ticket' : ''}"
-          click.delegate="selectTicketMode === true && tickets[ticket].isEliminated !== true ? submitPrizeRequest(ticket) : null"
-        >
-          <div repeat.for="row of gameParams.numRows" class="board__row">
-            <div
-              repeat.for="column of gameParams.numColumns"
-              class="board__square ${tickets[$parent.$parent.ticket].isEliminated !== true && tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].value > 0 ? 'clickable' : '' } ${tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].isMarked === true ? 'marked__tile' : ''}"
-              click.delegate="tickets[$parent.$parent.ticket].isEliminated !== true && pageState === 'IN_PROGRESS_STATE' && tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].value > 0 && selectTicketMode !== true ? tileSelectEvent($parent.$parent.ticket, $parent.row,column) : null"
-            >
-              ${tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].value > 0 ? tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].value : ""}
+      <div class="side_sectional sectional_sticky">
+        <br />
+        <br />
+        <div show.bind="pageState ==='WAITING_STATE'" class="flex-column padding-20px align__center">
+          <p>Loading game...</p>
+          <progress value.bind="countdown" max="3" id="progressBar"></progress>
+        </div>
+        <div show.bind="pageState ==='IN_PROGRESS_STATE'" class="base-timer">
+          <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <g class="base-timer__circle">
+              <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45" />
+              <path
+                id="base-timer-path-remaining"
+                stroke-dasharray="283"
+                class="base-timer__path-remaining green"
+                d="
+          M 50, 50
+          m -45, 0
+          a 45,45 0 1,0 90,0
+          a 45,45 0 1,0 -90,0
+        "
+              ></path>
+            </g>
+          </svg>
+          <span class="base-timer__label main_number_section" id="base-time-label"> ${currentNumber} </span>
+          <span>
+            <!-- Remaining time label -->
+          </span>
+        </div>
+        <div show.bind="pageState ==='GAME_OVER_STATE'" class="margin-top-10px w-100 message-container">Game over</div>
+      </div>
+      <div class="mid_sectional">
+        <div class="game_title_section">${sessionName}</div>
+        <div class="board__container">
+          <div
+            repeat.for="ticket of player.numTickets"
+            class="housie__container ${selectTicketMode === true ? 'select_ticket_mode_on' : ''} ${tickets[ticket].isEliminated === true ? 'eliminated_ticket' : ''}"
+            click.delegate="selectTicketMode === true && tickets[ticket].isEliminated !== true ? submitPrizeRequest(ticket) : null"
+          >
+            <div repeat.for="row of gameParams.numRows" class="board__row">
+              <div
+                repeat.for="column of gameParams.numColumns"
+                class="board__square ${pageState ==='IN_PROGRESS_STATE' && tickets[$parent.$parent.ticket].isEliminated !== true && tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].value > 0 ? 'clickable' : '' } ${tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].isMarked === true ? 'marked__tile' : ''}"
+                click.delegate="tickets[$parent.$parent.ticket].isEliminated !== true && pageState === 'IN_PROGRESS_STATE' && tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].value > 0 && selectTicketMode !== true ? tileSelectEvent($parent.$parent.ticket, $parent.row,column) : null"
+              >
+                ${tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].value > 0 ? tickets[$parent.$parent.ticket].ticketMatrix[$parent.row][column].value : ""}
+              </div>
             </div>
+            <br />
           </div>
-          <br />
         </div>
       </div>
       <div class="side_sectional">
+        <div class="player_section">${player.name}</div>
         <div class="prize_section" mouseover.delegate="showPrizeOptions()" mouseout.delegate="hidePrizeOptions()">
           <div class="prize_section_half">
-            <button class="housie_table_navbutton select_button margin-top-10px margin-right-10px">Claim Prize</button>
+            <button class="housie-table__nav-button button-styling margin-top-10px">Claim Prize</button>
             <div class="prize_options_section" hidden.bind="showPrizes !== true">
               <div
                 repeat.for="i of prizes.length"
@@ -43,7 +69,7 @@
             </div>
           </div>
           <div class="prize_section_half">
-            <button class="housie_table_navbutton cancel_button margin-top-10px margin-right-10px" click.delegate="ticketModeOff()">Cancel</button>
+            <button class="housie-table__nav-button cancel-button-styling margin-top-10px" click.delegate="ticketModeOff()">Cancel</button>
           </div>
         </div>
       </div>

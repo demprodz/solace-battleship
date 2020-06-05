@@ -1,20 +1,12 @@
 <template>
   <require from="./player-qr"></require>
   <div class="landing-page__container">
-    <label>Players scan the QR Code to join Match Session: ${sessionId}</label>
     <div class="join-screen">
-      <div>${pageState}</div>
-      <progress value.bind="countdown" max="3" id="progressBar"></progress>
-      <a href="${playerJoinUrl}" target="_blank">Join Game</a>
-      <div class="flex justify__flex-end margin-top-10px">
-        <button class="landing-page__nav-button margin-top-10px" click.trigger="startGame()">Start Game</button>
+      <div class="welcome-message">Welcome to Housie! The interactive Bingo game with multiple prizes! Can you keep up?</div>
+      <div class="margin-top-10px">
+        <button class="landing-page__nav-button button-styling" click.trigger="createGame()">Create a Game</button>
+        <a href="/lobby"> <button class="landing-page__nav-button button-styling">Join a Game</button></a>
       </div>
-      <div>${playersMessage}</div>
-      <ul class="">
-        <li repeat.for="i of numPlayers" class="">
-          <div>${playersList[i]}</div>
-        </li>
-      </ul>
     </div>
   </div>
 </template>

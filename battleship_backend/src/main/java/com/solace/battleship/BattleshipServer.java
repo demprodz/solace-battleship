@@ -11,7 +11,7 @@ public class BattleshipServer {
     private static final Logger log = LoggerFactory.getLogger(BattleshipServer.class);
 
     public static void main(String[] args) {
-        log.info("STARTING SOLACE BATTLESHIP GAME.....");
+        log.info("STARTING HOUSIE GAME.....");
         SpringApplication.run(BattleshipServer.class, args);
     }
 

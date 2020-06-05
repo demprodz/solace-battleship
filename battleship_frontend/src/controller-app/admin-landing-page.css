@@ -1,0 +1,42 @@
+.players_message {
+  font-family: var(--message-text-font);
+  font-size: 25px;
+  color: var(--soft-white);
+}
+
+
+
+button.copy_link_button {
+  width: 35%;
+  height: 35px;
+  vertical-align: middle;
+}
+
+.prizes_section {
+  font: var(--subtitle-text-font);
+  color: var(--soft-white);
+}
+
+.prizes_list_section {
+  height: 60px;
+}
+
+.prize_box {
+  background-color: rgb(123, 255, 149);
+  vertical-align: middle;
+  width: calc(100% / 8);
+  height: 30px;
+  color: var(--soft-white);
+  display: inline-block;
+  font-size: 15px;
+  line-height: 30px;
+  border: 1px solid var(--soft-white);
+  border-radius: 10px;
+  margin: 2px;
+}
+
+li {
+  display: block;
+  font: var(--list-text-font);
+  color: var(--soft-white);
+}

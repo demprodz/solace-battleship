@@ -13,6 +13,8 @@ public interface IPrize {
 
     public void setNumPrizes(int numPrizes);
 
+    public int getNumClaimedPrizes();
+
     public boolean getIsTaken();
 
     public void setIsTaken(boolean isTaken);

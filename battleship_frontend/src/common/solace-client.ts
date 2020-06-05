@@ -305,6 +305,7 @@ export class SolaceClient {
       this.log(`[WARNING] Already subscribed to ${topicName}.`);
       return;
     }
+
     this.log(`Subscribing to ${topicName}`);
     //Create a subscription object with the callback, upon succesful subscription, the object will be updated
     let subscriptionObject: SubscriptionObject = new SubscriptionObject(callback, false);

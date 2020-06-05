@@ -31,6 +31,30 @@ spring:
           destination: PRIZE-SUBMIT-REQUESTS
           group: SOLACE-BATTLESHIP
           binder: solace_cloud
+        player_page_request:
+          destination: PLAYER-PAGE-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
+        admin_page_request:
+          destination: ADMIN-PAGE-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
+        admin_landingpage_request:
+          destination: ADMIN-LANDINGPAGE-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud  
+        lobby_page_request:
+          destination: LOBBY-PAGE-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
+        session_create_request:
+          destination: SESSION-CREATE-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
+        session_search_request:
+          destination: SESSION-SEARCH-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
       binders:
         solace_cloud:
           type: solace
@@ -66,6 +90,24 @@ spring:
           prize_submit_request:
             consumer:
               queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/PRIZE-SUBMIT-REQUEST/*
+          player_page_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/PLAYER-PAGE-REQUEST/*
+          admin_page_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/ADMIN-PAGE-REQUEST
+          admin_landingpage_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/ADMIN-LANDINGPAGE-REQUEST
+          lobby_page_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/LOBBY-PAGE-REQUEST
+          session_create_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/SESSION-CREATE-REQUEST
+          session_search_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/SESSION-SEARCH-REQUEST
 logging:
   level:
     root: INFO

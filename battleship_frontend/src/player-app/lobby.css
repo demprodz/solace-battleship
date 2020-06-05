@@ -1,0 +1,49 @@
+.game-name {
+  display: inline-block;
+}
+
+.join-game-button {
+  height: 35px;
+  width: 60px;
+  font-size: 20px;
+  vertical-align: bottom;
+}
+
+.lobby-table {
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+.lobby-table-row {
+  background-color: var(--soft-white);
+  height: 50px;
+}
+
+.code-col {
+  width: 80px;
+}
+
+.title-col {
+  width: 270px;
+}
+
+.player-col {
+  width: 50px;
+}
+
+.prizes-col {
+  width: 300px;
+}
+
+.action-col {
+  width: 100px;
+}
+
+th {
+  background-color: var(--base-grey);
+}
+
+td,
+th {
+  border: 1px solid var(--base-grey);
+}

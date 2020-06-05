@@ -17,6 +17,10 @@ public class JoinResult {
     private String message;
     private TicketSet ticketSet;
 
+    public JoinResult() {
+        this.success = false;
+    }
+
     public JoinResult(final String playerId, final String playerNickname, final boolean success, final String message,
             final TicketSet ticketSet) {
         this.playerId = playerId;
