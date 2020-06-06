@@ -167,6 +167,11 @@ module.exports = ({ production, server, extractCss, coverage, analyze, karma } =
         baseUrl,
       },
     }),
+    new webpack.DefinePlugin({
+      "process.env": {
+        hostUrl: JSON.stringify(process.env.hostUrl),
+      },
+    }),
     // ref: https://webpack.js.org/plugins/mini-css-extract-plugin/
     ...when(
       extractCss,
@@ -177,6 +182,7 @@ module.exports = ({ production, server, extractCss, coverage, analyze, karma } =
       })
     ),
     ...when(production || server, new CopyWebpackPlugin([{ from: "static", to: outDir, ignore: [".*"] }])), // ignore dot (hidden) files
+    ...when(production || server, new CopyWebpackPlugin([{ from: "assets", to: outDir, ignore: [".*"] }])), // ignore dot (hidden) files
     ...when(analyze, new BundleAnalyzerPlugin()),
   ],
 });
