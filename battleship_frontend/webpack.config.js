@@ -169,9 +169,10 @@ module.exports = ({ production, server, extractCss, coverage, analyze, karma } =
       },
     }),
     new webpack.DefinePlugin({
-      "process.env": {
-        hostUrl: JSON.stringify(process.env.hostUrl),
-      },
+      "process.env.hostUrl": JSON.stringify(process.env.hostUrl),
+      "process.env.vpn": JSON.stringify(process.env.vpn),
+      "process.env.userName": JSON.stringify(process.env.userName),
+      "process.env.password": JSON.stringify(process.env.password),
     }),
     // ref: https://webpack.js.org/plugins/mini-css-extract-plugin/
     ...when(
