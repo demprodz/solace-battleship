@@ -26,3 +26,9 @@
   position: sticky;
   top: 200px;
 }
+
+.prize_instruction {
+  font-family: var(--message-text-font);
+  font-size: 50px;
+  color: var(--soft-red);
+}

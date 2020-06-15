@@ -89,7 +89,7 @@ export class AdminDashboard {
 
         if (prizeStatusResult != null) {
           this.prizes = prizeStatusResult.prizes;
-
+          console.log(this.prizes);
           if (prizeStatusResult.isGameOver) {
             this.pageState = GAME_OVER_STATE;
           }

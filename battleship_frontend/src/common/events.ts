@@ -155,6 +155,7 @@ export class IPrize {
   numPrizes: number;
   numClaimedPrizes: number;
   isTaken: boolean;
+  winners: string[];
 }
 
 export class PrizeStatusResult {

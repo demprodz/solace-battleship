@@ -10,6 +10,9 @@
             <div repeat.for="i of prizes.length" class="dashboard-prize ${prizes[i].isTaken !== true ? 'pattern_available' : 'pattern_not_available'}">
               <div class="prize_option_name">${prizes[i].prizeName}</div>
               <div class="prize_option_number">${prizes[i].numClaimedPrizes}/${prizes[i].numPrizes}</div>
+              <div class="prize_tooltip">
+                <div repeat.for="j of prizes[i].winners.length">${prizes[i].winners[j]}</div>
+              </div>
             </div>
           </div>
         </div>

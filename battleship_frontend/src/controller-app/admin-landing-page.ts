@@ -129,6 +129,7 @@ export class AdminLandingPage {
   copyUrlToClipboard() {
     const input = document.createElement("input");
     document.body.appendChild(input);
+
     input.value = this.playerJoinUrl;
 
     input.focus();
@@ -140,6 +141,7 @@ export class AdminLandingPage {
       console.error("Failed to copy text.");
     } else {
       this.copyToClipboardMessage = "Copied URL";
+      input.style.visibility = "hidden";
     }
   }
 

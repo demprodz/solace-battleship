@@ -194,7 +194,9 @@ export class HousieTable {
   }
 
   showPrizeOptions() {
-    this.showPrizes = true;
+    if (this.selectTicketMode !== true) {
+      this.showPrizes = true;
+    }
   }
 
   hidePrizeOptions() {
@@ -204,6 +206,9 @@ export class HousieTable {
   ticketModeOn(prizeIndex: number) {
     this.selectedPrizeIndex = prizeIndex;
     this.selectTicketMode = true;
+    this.showPrizes = false;
+
+    alert("You have chosen to claim " + this.prizes[prizeIndex].prizeName + ". Click on the winning ticket to claim your prize! Or choose Cancel to undo this action.");
   }
 
   ticketModeOff() {

@@ -6,12 +6,13 @@
   --base-green: #68cccd;
   --soft-white: white;
   --base-grey: #dddddd;
+  --soft-red: rgba(255, 47, 47, 0.699);
   --message-text-font: "Kalam", cursive;
   --button-text-font: 25px "Bebas Neue";
   --title-text-font: 150px "Bebas Neue";
   --subtitle-text-font: 65px "Bebas Neue";
   --list-text-font: 40px "Bebas Neue";
-  --main-number-text-font: 250px "Bebas Neue";
+  --main-number-text-font: 150px "Bebas Neue";
 }
 
 body {
@@ -129,6 +130,7 @@ input.link_box {
 .landing-page__container {
   height: 100%;
   width: 100%;
+  background-color: var(--base-green);
 }
 
 .landing-page__nav-button {
@@ -414,14 +416,16 @@ input.link_box {
 }
 
 .winning_pattern {
-  width: calc(100% / 8);
-  height: 25px;
+  width: 100%;
+  height: 45px;
   color: var(--soft-white);
-  display: inline-block;
-  font-size: 15px;
-  line-height: 25px;
-  border: 1px solid black;
-  margin: 2px;
+  display: block;
+  font: var(--subtitle-text-font);
+  font-size: 25px;
+  line-height: 45px;
+  border-radius: 10px;
+  border: 1px solid var(--soft-white);
+  margin-bottom: 10px;
 }
 
 .pattern_available {
@@ -769,8 +773,8 @@ html {
 /* Sets the containers height and width */
 .base-timer {
   position: relative;
-  height: 500px;
-  width: 500px;
+  height: 300px;
+  width: 300px;
   margin: 0 auto;
 }
 
@@ -790,8 +794,8 @@ html {
   position: absolute;
 
   /* Size should match the parent container */
-  width: 500px;
-  height: 500px;
+  width: 300px;
+  height: 300px;
 
   /* Keep the label aligned to the top */
   top: 0;
@@ -833,4 +837,8 @@ html {
 .main_number_section {
   font: var(--main-number-text-font);
   color: black; /*var(--soft-white);*/
+}
+
+.blue {
+  background-color: rgb(60, 164, 255) !important;
 }

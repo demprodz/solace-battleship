@@ -64,12 +64,12 @@
                 class="winning_pattern ${prizes[i].isTaken !== true ? 'pattern_available' : 'pattern_not_available'}"
                 click.delegate="prizes[i].isTaken !== true ? ticketModeOn(i) : null"
               >
-                ${prizes[i].abbreviatedName}
+                ${prizes[i].prizeName}
               </div>
             </div>
           </div>
           <div class="prize_section_half">
-            <button class="housie-table__nav-button cancel-button-styling margin-top-10px" click.delegate="ticketModeOff()">Cancel</button>
+            <button class="housie-table__nav-button cancel-button-styling margin-top-10px ${selectTicketMode == true ? 'blue' : ''}" click.delegate="ticketModeOff()">Cancel</button>
           </div>
         </div>
       </div>
