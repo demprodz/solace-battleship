@@ -145,7 +145,8 @@ public class GameEngine implements IGameEngine {
     boolean isGameInProgress = session.isGameInProgress();
     IPrize[] prizes = session.getPrizes();
     GameNumberSet gameNumberSet = session.getGameNumberSet();
-    return new AdminPageReloadResult(isGameInProgress, prizes, gameNumberSet, gameNumberSet != null);
+    int timer = session.getTimer();
+    return new AdminPageReloadResult(isGameInProgress, prizes, gameNumberSet, timer, gameNumberSet != null);
   }
 
   @Override
@@ -170,11 +171,13 @@ public class GameEngine implements IGameEngine {
   }
 
   @Override
-  public GameStart getGameStartAndStartGame(String sessionId) {
+  public GameStart getGameStartAndStartGame(GameStartRequest request) {
+    String sessionId = request.getSessionId();
     GameSession session = gameSessionMap.get(sessionId);
 
     if (canGameStart(sessionId)) {
-      return session.getGameStart();
+      return session.getGameStart(request.getIsAutoMode(), request.getSelectedTimer(),
+          request.getDisabledPrizesIndexList());
     }
 
     return new GameStart();
@@ -236,86 +239,14 @@ public class GameEngine implements IGameEngine {
     }
   }
 
-  // if (request.getPlayerName() == PlayerName.player1) {
-  // session.getMatchStart()
-  // .setPlayer1Board(new BoardSetResult(request.getPlayerName(),
-  // boardSetRequestResult, returnMessage));
-  // } else if (request.getPlayerName() == PlayerName.player2) {
-  // session.getMatchStart()
-  // .setPlayer2Board(new BoardSetResult(request.getPlayerName(),
-  // boardSetRequestResult, returnMessage));
-  // }
+  @Override
+  public NextNumberConfirmResult requestToConfirmNextNumber(NextNumberConfirmRequest nextNumberConfirmRequest) {
+    GameSession session = gameSessionMap.get(nextNumberConfirmRequest.getSessionId());
 
-  // return new BoardSetResult(request.getPlayerName(), boardSetRequestResult,
-  // returnMessage);
-
-  // }
-
-  // @Override
-  // public boolean canMatchStart(String sessionId) {
-  // GameSession session = gameSessionMap.get(sessionId);
-
-  // if (session != null && session.getGameState() ==
-  // GameState.WAITING_FOR_BOARD_SET) {
-  // return session.getMatchStart().getPlayer1Board() != null &&
-  // session.getMatchStart().getPlayer2Board() != null;
-  // }
-
-  // return false;
-  // }
-
-  // @Override
-  // public MatchStart getMatchStartAndStartMatch(String sessionId) {
-  // GameSession session = gameSessionMap.get(sessionId);
-
-  // if (canMatchStart(sessionId)) {
-  // session.setGameState(GameState.PLAYER1_TURN);
-  // return session.getMatchStart();
-  // }
-
-  // return null;
-  // }
-
-  // @Override
-  // public MoveResponseEvent requestToMakeMove(Move request) {
-  // GameSession session = gameSessionMap.get(request.getSessionId());
-  // if (session == null) {
-  // return new MoveResponseEvent();
-  // }
-
-  // return session.makeMove(request);
-  // }
-
-  // @Override
-  // public boolean shouldMatchEnd(String sessionId) {
-  // GameSession session = gameSessionMap.get(sessionId);
-  // if (session == null) {
-  // return false;
-  // }
-  // return (session.getPlayer1Score() == 0) || (session.getPlayer2Score() == 0);
-  // }
-
-  // @Override
-  // public MatchEnd endMatch(String sessionId) {
-  // GameSession session = gameSessionMap.get(sessionId);
-  // if (session == null) {
-  // return new MatchEnd();
-  // }
-
-  // if (this.shouldMatchEnd(sessionId)) {
-  // session.setGameState(GameState.GAME_OVER);
-  // MatchEnd finalScore = new MatchEnd();
-  // finalScore.setSessionId(sessionId);
-  // finalScore.setPlayer1Score(session.getPlayer1Score());
-  // finalScore.setPlayer2Score(session.getPlayer2Score());
-  // return finalScore;
-  // }
-
-  // // error
-  // return new MatchEnd();
-  // }
-
-  // public void updateBoard(MoveResponseEvent event) {
-  // gameSessionMap.get(event.getSessionId()).updateBoard(event);
-  // }
+    if (session == null) {
+      return new NextNumberConfirmResult(nextNumberConfirmRequest.getSessionId(), false, SESSION_DOES_NOT_EXIST_ERROR);
+    } else {
+      return session.confirmNumber(nextNumberConfirmRequest.getRowIndex(), nextNumberConfirmRequest.getColumnIndex());
+    }
+  }
 }

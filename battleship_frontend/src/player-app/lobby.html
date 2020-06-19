@@ -22,8 +22,11 @@
           <td class="title-col">${sessionSummary.name}</td>
           <td class="players-col">${sessionSummary.numPlayers}</td>
           <td class="prizes-col">
-            <div repeat.for="i of sessionSummary.prizes.length" class="winning_pattern pattern_available">
+            <div repeat.for="i of sessionSummary.prizes.length" class="lobby_pattern winning_pattern pattern_available">
               ${sessionSummary.prizes[i].abbreviatedName}
+                <div class="info_tooltip">
+                  ${sessionSummary.prizes[i].prizeName}
+                </div>
             </div>
           </td>
           <td class-"action-col">

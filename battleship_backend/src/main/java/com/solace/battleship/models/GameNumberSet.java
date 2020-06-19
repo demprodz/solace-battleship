@@ -26,29 +26,45 @@ public class GameNumberSet {
     public NextNumberChooseResult chooseNextNumber() {
         int rowIndex = random.nextInt(numberSet.length);
         int columnIndex = random.nextInt(numberSet[0].length);
+
         HousieNumber number = numberSet[rowIndex][columnIndex];
 
-        while (number.getIsMarked()) {
+        while (number.getIsHardMarked()) {
             rowIndex = random.nextInt(numberSet.length);
             columnIndex = random.nextInt(numberSet[0].length);
             number = numberSet[rowIndex][columnIndex];
         }
 
-        number.setIsMarked(true);
-        numbersLeft--;
+        return new NextNumberChooseResult(number.getValue(), rowIndex, columnIndex);
+    }
 
-        return new NextNumberChooseResult(number.getValue(), rowIndex, columnIndex, numbersLeft == 0);
+    public boolean confirmNumberAndCheckGameOver(int rowIndex, int columnIndex) {
+        if (!numberSet[rowIndex][columnIndex].getIsHardMarked()) {
+            numberSet[rowIndex][columnIndex].setIsHardMarked(true);
+            numbersLeft--;
+        }
+
+        return numbersLeft == 0;
     }
 
     public boolean isNumberMarked(int value) {
-        int columnIndex = (value - 1) % 10;
-        int rowIndex = value / 10;
+        for (int i = 0; i < numberSet.length; i++) {
+            for (int j = 0; j < numberSet[i].length; j++) {
+                if (numberSet[i][j].getValue() == value) {
+                    return numberSet[i][j].getIsHardMarked();
+                }
+            }
+        }
 
-        return numberSet[rowIndex][columnIndex].getIsMarked();
+        return false;
     }
 
     public IPrize[] getPrizes() {
         return prizes;
+    }
+
+    public void setPrizes(IPrize[] prizes) {
+        this.prizes = prizes;
     }
 
     public boolean isAllPrizesTaken() {

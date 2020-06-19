@@ -57,7 +57,7 @@
           <div repeat.for="row of gameNumberSet.numberSet[0].length" class="board__row">
             <div
               repeat.for="column of gameNumberSet.numberSet.length"
-              class="${gameNumberSet.numberSet[column][$parent.row].isMarked == true ? 'master_board_square marked__tile' : 'master_board_square'}"
+              class="${gameNumberSet.numberSet[column][$parent.row].isHardMarked == true ? 'master_board_square marked__tile' : 'master_board_square'}"
             >
               ${gameNumberSet.numberSet[column][$parent.row].value}
             </div>

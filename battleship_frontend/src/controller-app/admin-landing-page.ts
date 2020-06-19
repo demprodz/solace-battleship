@@ -1,4 +1,4 @@
-import { GameStart, TopicHelper, GameStartRequest, GameNumberSet, JoinResult, AdminLandingPageRequest, AdminLandingPageReloadResult, SessionSummary } from "../common/events";
+import { GameStart, TopicHelper, GameStartRequest, GameNumberSet, JoinResult, AdminLandingPageRequest, AdminLandingPageReloadResult, SessionSummary, IPrize } from "../common/events";
 import { inject } from "aurelia-framework";
 import { Router } from "aurelia-router";
 import { SolaceClient } from "common/solace-client";
@@ -18,6 +18,10 @@ export class AdminLandingPage {
 
   @bindable
   private sessionSummary: SessionSummary;
+
+  private isAutoMode: boolean = false;
+  private timers: string[] = ["10 seconds", "30 seconds", "45 seconds", "60 seconds"];
+  private selectedTimer: string = "";
 
   private pageState: string = "Loading game...";
   private sessionId: string;
@@ -101,8 +105,17 @@ export class AdminLandingPage {
 
   startGame() {
     let gameStartRequest: GameStartRequest = new GameStartRequest();
-    // playerJoined.playerName = this.player.name;
     gameStartRequest.sessionId = this.sessionId;
+    gameStartRequest.isAutoMode = this.isAutoMode;
+    gameStartRequest.selectedTimer = this.selectedTimer;
+
+    let disabledPrizesIndexList = [];
+    for (var i in this.sessionSummary.prizes) {
+      if (this.sessionSummary.prizes[i].isEnabled !== true) {
+        disabledPrizesIndexList.push(i);
+      }
+    }
+    gameStartRequest.disabledPrizesIndexList = disabledPrizesIndexList;
 
     let topicName: string = `${this.topicHelper.prefix}/GAMESTART-REQUEST`;
     let replyTopic: string = `${this.topicHelper.prefix}/GAMESTART-REPLY/CONTROLLER`;
@@ -114,6 +127,9 @@ export class AdminLandingPage {
         if (gameStartReply.success) {
           this.pageState = "Game is beginning...";
           this.gameStart.sessionId = gameStartReply.sessionId;
+          this.gameStart.isAutoMode = gameStartReply.isAutoMode;
+          this.gameStart.timer = gameStartReply.timer;
+
           this.gameNumberSet.numberSet = gameStartReply.gameNumberSet.numberSet;
           this.gameNumberSet.prizes = gameStartReply.gameNumberSet.prizes;
           this.gameNumberSet.numbersLeft = gameStartReply.gameNumberSet.numbersLeft;
@@ -143,6 +159,10 @@ export class AdminLandingPage {
       this.copyToClipboardMessage = "Copied URL";
       input.style.visibility = "hidden";
     }
+  }
+
+  togglePrize(prizeIndex: number) {
+    this.sessionSummary.prizes[prizeIndex].isEnabled = !this.sessionSummary.prizes[prizeIndex].isEnabled;
   }
 
   detached() {

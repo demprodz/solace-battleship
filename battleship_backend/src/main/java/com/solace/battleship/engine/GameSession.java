@@ -1,11 +1,9 @@
 package com.solace.battleship.engine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Map.Entry;
+import java.util.List;
 
 import com.solace.battleship.events.*;
 import com.solace.battleship.helpers.TicketGenerator;
@@ -33,6 +31,7 @@ public class GameSession {
   private GameStart gameStart;
   private HashMap<String, Player> players;
   private GameNumberSet numberSet;
+  private int timer;
 
   public GameSession(String sessionId, String name, String playerJoinUrl) {
     this.sessionId = sessionId;
@@ -42,6 +41,7 @@ public class GameSession {
     this.gameStart = new GameStart(sessionId);
     this.players = new HashMap<String, Player>();
     this.numberSet = new GameNumberSet();
+    this.timer = 10;
   }
 
   public String getPlayerJoinUrl() {
@@ -60,9 +60,39 @@ public class GameSession {
     this.gameState = gameState;
   }
 
-  public GameStart getGameStart() {
+  public int getTimer() {
+    return this.timer;
+  }
+
+  public void setTimer(int timer) {
+    this.timer = timer;
+  }
+
+  public GameStart getGameStart(boolean isAutoMode, String selectedTimer, int[] disabledPrizesIndexList) {
+    numberSet.setPrizes(getEnabledPrizeList(disabledPrizesIndexList));
+
     gameStart.setPlayers(players);
     gameStart.setGameNumberSet(numberSet);
+    gameStart.setIsAutoMode(isAutoMode);
+
+    switch (selectedTimer) {
+      case "10 seconds":
+        this.timer = 10;
+        break;
+      case "30 seconds":
+        this.timer = 30;
+        break;
+      case "45 seconds":
+        this.timer = 45;
+        break;
+      case "60 seconds":
+        this.timer = 60;
+        break;
+      default:
+        this.timer = 10;
+    }
+
+    gameStart.setTimer(this.timer);
 
     if (players.size() > 0) {
       gameStart.setSuccess(true);
@@ -93,6 +123,12 @@ public class GameSession {
     nextNumberChooseResult.setSessionId(sessionId);
 
     return nextNumberChooseResult;
+  }
+
+  public NextNumberConfirmResult confirmNumber(int rowIndex, int columnIndex) {
+    boolean isGameOver = this.numberSet.confirmNumberAndCheckGameOver(rowIndex, columnIndex);
+
+    return new NextNumberConfirmResult(sessionId, true, isGameOver);
   }
 
   public PrizeSubmitResult submitPrizeRequest(PrizeSubmitRequest request) {
@@ -164,5 +200,23 @@ public class GameSession {
   public SessionSummary getSessionSummary() {
     return new SessionSummary(this.sessionId, this.name, this.playerJoinUrl, this.players, this.getPrizes(),
         this.isGameInProgress());
+  }
+
+  // Remove disabled prizes from final prize list
+  private IPrize[] getEnabledPrizeList(int[] disabledPrizesIndexList) {
+    for (int i : disabledPrizesIndexList) {
+      this.numberSet.getPrizes()[i].setIsEnabled(false);
+    }
+
+    ArrayList<IPrize> enabledPrizeList = new ArrayList<IPrize>();
+    for (IPrize prize : this.numberSet.getPrizes()) {
+      if (prize.getIsEnabled()) {
+        enabledPrizeList.add(prize);
+      }
+    }
+
+    IPrize[] finalEnabledPrizeList = new IPrize[this.numberSet.getPrizes().length - disabledPrizesIndexList.length];
+
+    return enabledPrizeList.toArray(finalEnabledPrizeList);
   }
 }

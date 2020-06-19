@@ -1,16 +1,24 @@
 package com.solace.battleship.models;
 
+import java.util.ArrayList;
+
+import com.solace.battleship.events.Player;
+
 public class BottomLinePrize implements IPrize {
     private int numPrizes;
     private int numClaimedPrizes;
+    private ArrayList<String> winners;
     private boolean isTaken;
+    private boolean isEnabled;
 
     public BottomLinePrize() {
     }
 
     public BottomLinePrize(int numPrizes) {
+        isEnabled = true;
         this.numPrizes = numPrizes;
         this.numClaimedPrizes = 0;
+        this.winners = new ArrayList<String>();
     }
 
     public String getPrizeName() {
@@ -25,7 +33,7 @@ public class BottomLinePrize implements IPrize {
         return "The ticket with all the numbers of the bottom row marked.";
     }
 
-    public boolean checkPatternMatch(Ticket ticket, GameNumberSet numberSet) {
+    public boolean checkPatternMatch(Player player, Ticket ticket, GameNumberSet numberSet) {
         Spot[][] spots = ticket.getTicketMatrix();
 
         int markedSpots = 0;
@@ -38,6 +46,7 @@ public class BottomLinePrize implements IPrize {
 
         if (markedSpots == 5) {
             numClaimedPrizes++;
+            winners.add(player.getName());
 
             if (numPrizes == numClaimedPrizes) {
                 isTaken = true;
@@ -67,6 +76,63 @@ public class BottomLinePrize implements IPrize {
 
     public void setIsTaken(boolean isTaken) {
         this.isTaken = isTaken;
+    }
+
+    public boolean getIsEnabled() {
+        return this.isEnabled;
+    }
+
+    public void setIsEnabled(boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
+
+    public BottomLinePrize(int numPrizes, int numClaimedPrizes, ArrayList<String> winners, boolean isTaken) {
+        this.numPrizes = numPrizes;
+        this.numClaimedPrizes = numClaimedPrizes;
+        this.winners = winners;
+        this.isTaken = isTaken;
+    }
+
+    public void setNumClaimedPrizes(int numClaimedPrizes) {
+        this.numClaimedPrizes = numClaimedPrizes;
+    }
+
+    public ArrayList<String> getWinners() {
+        return this.winners;
+    }
+
+    public void setWinners(ArrayList<String> winners) {
+        this.winners = winners;
+    }
+
+    public boolean isIsTaken() {
+        return this.isTaken;
+    }
+
+    public BottomLinePrize numPrizes(int numPrizes) {
+        this.numPrizes = numPrizes;
+        return this;
+    }
+
+    public BottomLinePrize numClaimedPrizes(int numClaimedPrizes) {
+        this.numClaimedPrizes = numClaimedPrizes;
+        return this;
+    }
+
+    public BottomLinePrize winners(ArrayList<String> winners) {
+        this.winners = winners;
+        return this;
+    }
+
+    public BottomLinePrize isTaken(boolean isTaken) {
+        this.isTaken = isTaken;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + " numPrizes='" + getNumPrizes() + "'" + ", numClaimedPrizes='" + getNumClaimedPrizes() + "'"
+                + ", winners='" + getWinners() + "'" + ", isTaken='" + isIsTaken() + "'" + "}";
     }
 
     @Override

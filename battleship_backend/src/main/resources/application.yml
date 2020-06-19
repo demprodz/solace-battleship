@@ -27,6 +27,10 @@ spring:
           destination: NEXTNUMBER-CHOOSE-REQUESTS
           group: SOLACE-BATTLESHIP
           binder: solace_cloud
+        nextnumber_confirm_request:
+          destination: NEXTNUMBER-CONFIRM-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
         prize_submit_request:
           destination: PRIZE-SUBMIT-REQUESTS
           group: SOLACE-BATTLESHIP
@@ -87,6 +91,9 @@ spring:
           nextnumber_choose_request:
             consumer:
               queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/NEXTNUMBER-CHOOSE-REQUEST
+          nextnumber_confirm_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/NEXTNUMBER-CONFIRM-REQUEST
           prize_submit_request:
             consumer:
               queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/PRIZE-SUBMIT-REQUEST/*

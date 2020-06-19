@@ -31,6 +31,8 @@ public interface IGameEngine {
 
   public AdminLandingPageReloadResult requestToGetAdminLandingPageReload(AdminLandingPageRequest request);
 
+  public NextNumberConfirmResult requestToConfirmNextNumber(NextNumberConfirmRequest nextNumberConfirmRequest);
+
   /**
    * Function to check if a game can start
    *
@@ -42,10 +44,10 @@ public interface IGameEngine {
   /**
    * Function to get the GameStart event
    *
-   * @param sessionId
+   * @param request
    * @return a GameStart event object
    */
-  public GameStart getGameStartAndStartGame(String sessionId);
+  public GameStart getGameStartAndStartGame(GameStartRequest request);
 
   /**
    * Function to get next random number from the master table

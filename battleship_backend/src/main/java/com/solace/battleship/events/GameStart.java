@@ -13,6 +13,8 @@ public class GameStart {
     private String sessionId;
     private HashMap<String, Player> players;
     private GameNumberSet gameNumberSet;
+    private boolean isAutoMode;
+    private int timer;
     private boolean success;
 
     public GameStart() {
@@ -54,6 +56,70 @@ public class GameStart {
 
     public GameNumberSet getGameNumberSet() {
         return gameNumberSet;
+    }
+
+    public GameStart(String sessionId, HashMap<String, Player> players, GameNumberSet gameNumberSet, boolean isAutoMode,
+            int timer, boolean success) {
+        this.sessionId = sessionId;
+        this.players = players;
+        this.gameNumberSet = gameNumberSet;
+        this.isAutoMode = isAutoMode;
+        this.timer = timer;
+        this.success = success;
+    }
+
+    public boolean isIsAutoMode() {
+        return this.isAutoMode;
+    }
+
+    public boolean getIsAutoMode() {
+        return this.isAutoMode;
+    }
+
+    public void setIsAutoMode(boolean isAutoMode) {
+        this.isAutoMode = isAutoMode;
+    }
+
+    public int getTimer() {
+        return this.timer;
+    }
+
+    public void setTimer(int timer) {
+        this.timer = timer;
+    }
+
+    public boolean isSuccess() {
+        return this.success;
+    }
+
+    public GameStart sessionId(String sessionId) {
+        this.sessionId = sessionId;
+        return this;
+    }
+
+    public GameStart players(HashMap<String, Player> players) {
+        this.players = players;
+        return this;
+    }
+
+    public GameStart gameNumberSet(GameNumberSet gameNumberSet) {
+        this.gameNumberSet = gameNumberSet;
+        return this;
+    }
+
+    public GameStart isAutoMode(boolean isAutoMode) {
+        this.isAutoMode = isAutoMode;
+        return this;
+    }
+
+    public GameStart timer(int timer) {
+        this.timer = timer;
+        return this;
+    }
+
+    public GameStart success(boolean success) {
+        this.success = success;
+        return this;
     }
 
     @Override

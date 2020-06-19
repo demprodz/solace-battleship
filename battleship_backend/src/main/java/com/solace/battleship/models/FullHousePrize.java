@@ -1,16 +1,25 @@
 package com.solace.battleship.models;
 
+import java.util.ArrayList;
+import java.util.Objects;
+
+import com.solace.battleship.events.Player;
+
 public class FullHousePrize implements IPrize {
     private int numPrizes;
     private int numClaimedPrizes;
+    private ArrayList<String> winners;
     private boolean isTaken;
+    private boolean isEnabled;
 
     public FullHousePrize() {
     }
 
     public FullHousePrize(int numPrizes) {
+        this.isEnabled = true;
         this.numPrizes = numPrizes;
         this.numClaimedPrizes = 0;
+        this.winners = new ArrayList<String>();
     }
 
     public String getPrizeName() {
@@ -25,7 +34,7 @@ public class FullHousePrize implements IPrize {
         return "The ticket with all the 15 numbers marked.";
     }
 
-    public boolean checkPatternMatch(Ticket ticket, GameNumberSet numberSet) {
+    public boolean checkPatternMatch(Player player, Ticket ticket, GameNumberSet numberSet) {
         Spot[][] spots = ticket.getTicketMatrix();
 
         int markedSpots = 0;
@@ -40,6 +49,7 @@ public class FullHousePrize implements IPrize {
 
         if (markedSpots == 15) {
             numClaimedPrizes++;
+            winners.add(player.getName());
 
             if (numPrizes == numClaimedPrizes) {
                 isTaken = true;
@@ -69,6 +79,68 @@ public class FullHousePrize implements IPrize {
 
     public void setIsTaken(boolean isTaken) {
         this.isTaken = isTaken;
+    }
+
+    public boolean getIsEnabled() {
+        return this.isEnabled;
+    }
+
+    public void setIsEnabled(boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
+
+    public FullHousePrize(int numPrizes, int numClaimedPrizes, ArrayList<String> winners, boolean isTaken) {
+        this.numPrizes = numPrizes;
+        this.numClaimedPrizes = numClaimedPrizes;
+        this.winners = winners;
+        this.isTaken = isTaken;
+    }
+
+    public void setNumClaimedPrizes(int numClaimedPrizes) {
+        this.numClaimedPrizes = numClaimedPrizes;
+    }
+
+    public ArrayList<String> getWinners() {
+        return this.winners;
+    }
+
+    public void setWinners(ArrayList<String> winners) {
+        this.winners = winners;
+    }
+
+    public boolean isIsTaken() {
+        return this.isTaken;
+    }
+
+    public FullHousePrize numPrizes(int numPrizes) {
+        this.numPrizes = numPrizes;
+        return this;
+    }
+
+    public FullHousePrize numClaimedPrizes(int numClaimedPrizes) {
+        this.numClaimedPrizes = numClaimedPrizes;
+        return this;
+    }
+
+    public FullHousePrize winners(ArrayList<String> winners) {
+        this.winners = winners;
+        return this;
+    }
+
+    public FullHousePrize isTaken(boolean isTaken) {
+        this.isTaken = isTaken;
+        return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(numPrizes, numClaimedPrizes, winners, isTaken);
+    }
+
+    @Override
+    public String toString() {
+        return "{" + " numPrizes='" + getNumPrizes() + "'" + ", numClaimedPrizes='" + getNumClaimedPrizes() + "'"
+                + ", winners='" + getWinners() + "'" + ", isTaken='" + isIsTaken() + "'" + "}";
     }
 
     @Override

@@ -14,17 +14,19 @@ public class AdminPageReloadResult {
     private boolean isGameInProgress;
     private IPrize[] prizes;
     private GameNumberSet gameNumberSet;
+    private int timer;
     private boolean success;
 
     public AdminPageReloadResult() {
         this.success = false;
     }
 
-    public AdminPageReloadResult(boolean isGameInProgress, IPrize[] prizes, GameNumberSet gameNumberSet,
+    public AdminPageReloadResult(boolean isGameInProgress, IPrize[] prizes, GameNumberSet gameNumberSet, int timer,
             boolean success) {
         this.isGameInProgress = isGameInProgress;
         this.prizes = prizes;
         this.gameNumberSet = gameNumberSet;
+        this.timer = timer;
         this.success = success;
     }
 
@@ -54,6 +56,14 @@ public class AdminPageReloadResult {
 
     public void setGameNumberSet(GameNumberSet gameNumberSet) {
         this.gameNumberSet = gameNumberSet;
+    }
+
+    public int getTimer() {
+        return this.timer;
+    }
+
+    public void setTimer(int timer) {
+        this.timer = timer;
     }
 
     public boolean isSuccess() {

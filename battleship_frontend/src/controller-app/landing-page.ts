@@ -96,7 +96,7 @@ export class LandingPage {
       .sendRequest(topicName, JSON.stringify(sessionCreateRequest), replyTopic)
       .then((msg: any) => {
         let sessionCreateResult: SessionCreateResult = JSON.parse(msg.getBinaryAttachment());
-        console.log(sessionCreateResult);
+
         if (sessionCreateResult.success) {
           this.router.navigateToRoute("admin", { sessionId: this.sessionId });
         }

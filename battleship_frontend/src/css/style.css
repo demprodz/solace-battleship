@@ -123,6 +123,16 @@ input.link_box {
   border: 1px solid var(--soft-white);
 }
 
+input.checkbox {
+  vertical-align: middle;
+  transform: scale(2);
+}
+
+select.options_dropdown {
+  vertical-align: middle;
+  transform: scale(1.2);
+}
+
 /**
  * Landing page
  */
@@ -344,8 +354,16 @@ input.link_box {
   margin-right: 10px;
 }
 
+.margin-right-20px {
+  margin-right: 20px;
+}
+
 .margin-left-10px {
   margin-left: 10px;
+}
+
+.margin-left-20px {
+  margin-left: 20px;
 }
 
 .margin-top-20px {

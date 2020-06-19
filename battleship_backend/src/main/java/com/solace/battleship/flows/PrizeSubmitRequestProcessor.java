@@ -32,7 +32,7 @@ public class PrizeSubmitRequestProcessor extends AbstractRequestProcessor<PrizeS
     // the message header
     resolver.resolveDestination(replyTo).send(message(result));
 
-    if (result.isSuccess() && gameEngine.updatePrizeStatus(prizeSubmitRequest)) {
+    if (result.isSuccess()) {
       resolver
           .resolveDestination(
               "SOLACE/BATTLESHIP/" + prizeSubmitRequest.getSessionId() + "/UPDATE-PRIZE-STATUS/CONTROLLER")

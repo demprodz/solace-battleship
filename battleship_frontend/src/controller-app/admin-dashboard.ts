@@ -13,6 +13,8 @@ import {
   PrizeStatusResult,
   AdminDashboardPageRequest,
   AdminDashboardPageReloadResult,
+  NextNumberConfirmEvent,
+  NextNumberConfirmResult,
 } from "../common/events";
 import { bindable, inject } from "aurelia-framework";
 import { SolaceClient } from "common/solace-client";
@@ -26,6 +28,7 @@ export class AdminDashboard {
   private pageState: string = IN_PROGRESS_STATE;
   private currentNumber: number;
   private autoMode: boolean = false;
+  private timer: number = 10;
   private sessionId: string;
   private topicPrefix: string;
 
@@ -60,6 +63,8 @@ export class AdminDashboard {
     private gameNumberSet: GameNumberSet
   ) {
     this.prizes = this.gameNumberSet.prizes;
+    this.timer = this.gameStart.timer;
+    this.autoMode = this.gameStart.isAutoMode;
   }
 
   activate(params, routeConfig) {
@@ -80,6 +85,9 @@ export class AdminDashboard {
     //WARM-UP THE NEXTNUMBER-CHOOSE-REPLY SUBSCRIPTION
     this.solaceClient.subscribeReply(`${this.topicPrefix}/NEXTNUMBER-CHOOSE-REPLY/CONTROLLER`);
 
+    //WARM-UP THE NEXTNUMBER-CONFIRM-REPLY SUBSCRIPTION
+    this.solaceClient.subscribeReply(`${this.topicPrefix}/NEXTNUMBER-CONFIRM-REPLY/CONTROLLER`);
+
     //Subscribe to the UPDATE-PRIZE-STATUS event
     this.solaceClient.subscribe(
       `${this.topicPrefix}/UPDATE-PRIZE-STATUS/CONTROLLER`,
@@ -89,7 +97,7 @@ export class AdminDashboard {
 
         if (prizeStatusResult != null) {
           this.prizes = prizeStatusResult.prizes;
-          console.log(this.prizes);
+
           if (prizeStatusResult.isGameOver) {
             this.pageState = GAME_OVER_STATE;
           }
@@ -99,7 +107,6 @@ export class AdminDashboard {
 
     this.chooseNextNumberEvent();
     this.autoModeCaller();
-    // this.startTimer();
   }
 
   reloadAdminPageFromServer() {
@@ -118,6 +125,8 @@ export class AdminDashboard {
           this.gameNumberSet = adminDashboardPageReloadResult.gameNumberSet;
           this.pageState = adminDashboardPageReloadResult.isGameInProgress ? IN_PROGRESS_STATE : GAME_OVER_STATE;
           this.prizes = adminDashboardPageReloadResult.prizes;
+          this.timer = adminDashboardPageReloadResult.timer;
+          this.autoMode = false;
         }
 
         this.prepareSolaceSubscriptions();
@@ -141,11 +150,22 @@ export class AdminDashboard {
         let nextNumberChooseResult: NextNumberChooseResult = JSON.parse(msg.getBinaryAttachment());
         if (nextNumberChooseResult.success) {
           this.currentNumber = nextNumberChooseResult.value;
-          this.gameNumberSet.numberSet[nextNumberChooseResult.rowIndex][nextNumberChooseResult.columnIndex].isMarked = true;
-        }
+          this.gameNumberSet.numberSet[nextNumberChooseResult.rowIndex][nextNumberChooseResult.columnIndex].isHardMarked = true;
 
-        if (nextNumberChooseResult.isGameOver) {
-          this.pageState = GAME_OVER_STATE;
+          let nextNumberConfirmEvent: NextNumberConfirmEvent = new NextNumberConfirmEvent();
+          nextNumberConfirmEvent.sessionId = this.sessionId;
+          nextNumberConfirmEvent.rowIndex = nextNumberChooseResult.rowIndex;
+          nextNumberConfirmEvent.columnIndex = nextNumberChooseResult.columnIndex;
+
+          this.solaceClient
+            .sendRequest(`${this.topicPrefix}/NEXTNUMBER-CONFIRM-REQUEST`, JSON.stringify(nextNumberConfirmEvent), `${this.topicPrefix}/NEXTNUMBER-CONFIRM-REPLY/CONTROLLER`)
+            .then((msg: any) => {
+              let nextNumberConfirmResult: NextNumberConfirmResult = JSON.parse(msg.getBinaryAttachment());
+
+              if (nextNumberConfirmResult.isGameOver) {
+                this.pageState = GAME_OVER_STATE;
+              }
+            });
         }
       })
       .catch((err) => {
@@ -166,7 +186,7 @@ export class AdminDashboard {
       if (this.autoMode) {
         this.chooseNextNumberEvent();
       }
-    }, 5000);
+    }, this.timer * 1000);
   }
 
   startTimer() {
@@ -201,7 +221,6 @@ export class AdminDashboard {
   setCircleDasharray() {
     const circleDasharray = `${(this.calculateTimeFraction() * 283).toFixed(0)} 283`;
     // const circleDasharray = `0 283`;
-    console.log(circleDasharray);
     document.getElementById("base-timer-path-remaining").setAttribute("stroke-dasharray", circleDasharray);
   }
 

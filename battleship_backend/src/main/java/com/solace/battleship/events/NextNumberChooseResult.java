@@ -11,7 +11,6 @@ public class NextNumberChooseResult {
     private int rowIndex;
     private int columnIndex;
     private boolean success;
-    private boolean isGameOver;
     private String returnMessage;
 
     public String getSessionId() {
@@ -20,14 +19,12 @@ public class NextNumberChooseResult {
 
     public NextNumberChooseResult() {
         success = false;
-        isGameOver = true;
     }
 
-    public NextNumberChooseResult(int value, int rowIndex, int columnIndex, boolean isGameOver) {
+    public NextNumberChooseResult(int value, int rowIndex, int columnIndex) {
         this.value = value;
         this.rowIndex = rowIndex;
         this.columnIndex = columnIndex;
-        this.isGameOver = isGameOver;
     }
 
     public NextNumberChooseResult(String sessionId, boolean success, String returnMessage) {
@@ -81,13 +78,5 @@ public class NextNumberChooseResult {
 
     public void setReturnMessage(String returnMessage) {
         this.returnMessage = returnMessage;
-    }
-
-    public boolean getIsGameOver() {
-        return this.isGameOver;
-    }
-
-    public void setIsGameOver(boolean isGameOver) {
-        this.isGameOver = isGameOver;
     }
 }

@@ -98,6 +98,7 @@ export class AdminDashboardPageReloadResult {
   isGameInProgress: boolean;
   gameNumberSet: GameNumberSet;
   prizes: IPrize[];
+  timer: number;
   success: boolean;
 }
 
@@ -130,11 +131,16 @@ export class GameStart {
   sessionId: string;
   players: { [key: string]: Player };
   gameNumberSet: GameNumberSet;
+  isAutoMode: boolean;
+  timer: number;
   success: boolean;
 }
 
 export class GameStartRequest {
   sessionId: string;
+  isAutoMode: boolean;
+  selectedTimer: string;
+  disabledPrizesIndexList: number[];
 }
 
 export class GameNumberSet {
@@ -145,7 +151,8 @@ export class GameNumberSet {
 
 export class HousieNumber {
   value: number;
-  isMarked: boolean;
+  isSoftMarked: boolean;
+  isHardMarked: boolean;
 }
 
 export class IPrize {
@@ -155,6 +162,7 @@ export class IPrize {
   numPrizes: number;
   numClaimedPrizes: number;
   isTaken: boolean;
+  isEnabled: boolean;
   winners: string[];
 }
 
@@ -172,6 +180,18 @@ export class NextNumberChooseResult {
   value: number;
   rowIndex: number;
   columnIndex: number;
+  success: boolean;
+  returnMessage: string;
+}
+
+export class NextNumberConfirmEvent {
+  sessionId: string;
+  rowIndex: number;
+  columnIndex: number;
+}
+
+export class NextNumberConfirmResult {
+  sessionId: string;
   success: boolean;
   isGameOver: boolean;
   returnMessage: string;

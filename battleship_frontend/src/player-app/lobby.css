@@ -47,3 +47,43 @@ td,
 th {
   border: 1px solid var(--base-grey);
 }
+
+.lobby_pattern {
+  width: 45px !important;
+  display: inline-block !important;
+  position: relative;
+  margin-bottom: 0px !important;
+}
+
+.lobby_pattern .info_tooltip {
+  visibility: hidden;
+  width: 200px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 10px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -110px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.lobby_pattern .info_tooltip:after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.lobby_pattern:hover .info_tooltip {
+  visibility: visible;
+  opacity: 1;
+}

@@ -25,7 +25,7 @@ public class GameStartRequestProcessor extends AbstractRequestProcessor<GameStar
   @StreamListener(GameStartRequestProcessorBinding.INPUT)
 
   public void handle(GameStartRequest gameStartRequest, @Header("reply-to") String replyTo) {
-    GameStart gameStart = gameEngine.getGameStartAndStartGame(gameStartRequest.getSessionId());
+    GameStart gameStart = gameEngine.getGameStartAndStartGame(gameStartRequest);
     resolver.resolveDestination(replyTo).send(message(gameStart));
   }
 

@@ -1,22 +1,20 @@
 package com.solace.battleship.models;
 
+import java.util.HashSet;
+
 public class Ticket {
 	private int ticketNumber;
 	private Spot[][] ticketMatrix;
 	private int populatedSpots;
 	private boolean isEliminated;
-	private final int EARLY_FIVE = 5;
+	private HashSet<String> claimedPrizes;
 	private final int MAX_POPULATED_SPOTS = 15;
-	private boolean foundEarlyFive;
-	private boolean foundTopLine;
-	private boolean foundMiddleLine;
-	private boolean foundBottomLine;
-	private boolean foundFullHouse;
 
 	public Ticket(int ticketNumber) {
 		this.ticketNumber = ticketNumber;
 		this.ticketMatrix = new Spot[3][9];
 		this.isEliminated = false;
+		this.claimedPrizes = new HashSet<String>();
 	}
 
 	public int getPopulatedSpots() {
@@ -46,77 +44,6 @@ public class Ticket {
 		return ticketMatrix[row][column].toggleMarked();
 	}
 
-	public boolean isEarlyFive() {
-		// if (markedSpots == EARLY_FIVE && !foundEarlyFive) {
-		// foundEarlyFive = true;
-		// return true;
-		// }
-
-		return false;
-	}
-
-	public boolean isTopLine() {
-		// if (foundTopLine) {
-		// return false;
-		// }
-
-		// int sum = 0;
-		// for (int column = 0; column < 9; column++) {
-		// sum += ticketMatrix[0][column];
-		// }
-
-		// if (sum == -5) {
-		// foundTopLine = true;
-		// return true;
-		// }
-
-		return false;
-	}
-
-	public boolean isMiddleLine() {
-		// if (foundMiddleLine) {
-		// return false;
-		// }
-
-		// int sum = 0;
-		// for (int column = 0; column < 9; column++) {
-		// sum += ticketMatrix[1][column];
-		// }
-
-		// if (sum == -5) {
-		// foundMiddleLine = true;
-		// return true;
-		// }
-
-		return false;
-	}
-
-	public boolean isBottomLine() {
-		// if (foundBottomLine) {
-		// return false;
-		// }
-
-		// int sum = 0;
-		// for (int column = 0; column < 9; column++) {
-		// sum += ticketMatrix[2][column];
-		// }
-
-		// if (sum == -5) {
-		// foundBottomLine = true;
-		// return true;
-		// }
-
-		return false;
-	}
-
-	public boolean isFullHouse() {
-		// if (markedSpots == MAX_POPULATED_SPOTS && !foundFullHouse) {
-		// foundFullHouse = true;
-		// return true;
-		// }
-		return false;
-	}
-
 	public int getRowSize() {
 		return 3;
 	}
@@ -135,6 +62,18 @@ public class Ticket {
 
 	public boolean getIsEliminated() {
 		return isEliminated;
+	}
+
+	public HashSet<String> getClaimedPrizes() {
+		return claimedPrizes;
+	}
+
+	public boolean prizeIsClaimed(String prizeName) {
+		return claimedPrizes.contains(prizeName);
+	}
+
+	public void addClaimedPrize(String prizeName) {
+		claimedPrizes.add(prizeName);
 	}
 
 	public void printTicket() {

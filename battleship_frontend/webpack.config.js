@@ -1,5 +1,6 @@
 const webpack = require("webpack");
 const path = require("path");
+
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -140,6 +141,10 @@ module.exports = ({ production, server, extractCss, coverage, analyze, karma } =
       { test: /\.woff(\?v=[0-9]\.[0-9]\.[0-9])?$/i, loader: "url-loader", options: { limit: 10000, mimetype: "application/font-woff" } },
       // load these fonts normally, as files:
       { test: /\.(ttf|eot|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/i, loader: "file-loader" },
+      {
+        test: /\.mp3$/,
+        loader: "file-loader",
+      },
       ...when(coverage, {
         test: /\.[jt]s$/i,
         loader: "istanbul-instrumenter-loader",

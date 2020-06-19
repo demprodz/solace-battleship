@@ -18,9 +18,35 @@
         </div>
         <div class="prizes_section margin-top-20px">Prizes
         <div class="prizes_list_section">
-          <div repeat.for="i of sessionSummary.prizes.length" class="prize_box">
+          <div repeat.for="i of sessionSummary.prizes.length" class="prize_box ${sessionSummary.prizes[i].isEnabled === true ? 'pattern_available' : 'pattern_not_available'}" click.trigger="togglePrize(i)">
             ${sessionSummary.prizes[i].prizeName}
           </div></div>
+        </div>
+        <div class="options_section margin-top-20px">
+          <div class="auto_mode_section margin-right-20px">
+            <label for="automode-toggle">Auto Mode
+            </label>
+            <span class="info_tooltip_wrapper">&#9432;
+              <div class="info_tooltip">
+              You can turn on/off Auto Mode during the game
+              </div>
+            </span>
+            <input type="checkbox" class="checkbox margin-left-10px" checked.bind="isAutoMode">
+          </div>
+          <div class="auto_mode_section margin-left-20px">
+            <label for="automode-timer">Game Speed</label>
+            <span class="info_tooltip_wrapper">&#9432;
+              <div class="info_tooltip">
+              Time between picked numbers in Auto Mode
+              </div>
+            </span>
+            <select class="options_dropdown margin-left-10px" name="automode-timer" id="automode-timer" value.bind="selectedTimer">
+              <option repeat.for="timer of timers"
+                      value.bind="timer">
+                ${timer}
+              </option>
+            </select>
+          </div>
         </div>
         <div class="flex justify__center margin-top-10px">
           <button class="landing-page__nav-button button-styling margin-top-10px" click.trigger="startGame()">Start Game</button>

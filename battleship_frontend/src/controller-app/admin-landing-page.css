@@ -4,8 +4,6 @@
   color: var(--soft-white);
 }
 
-
-
 button.copy_link_button {
   width: 35%;
   height: 35px;
@@ -22,7 +20,6 @@ button.copy_link_button {
 }
 
 .prize_box {
-  background-color: rgb(123, 255, 149);
   vertical-align: middle;
   width: calc(100% / 8);
   height: 30px;
@@ -33,10 +30,57 @@ button.copy_link_button {
   border: 1px solid var(--soft-white);
   border-radius: 10px;
   margin: 2px;
+  cursor: pointer !important;
 }
 
 li {
   display: block;
   font: var(--list-text-font);
   color: var(--soft-white);
+}
+
+.auto_mode_section {
+  font: var(--subtitle-text-font);
+  font-size: 30px !important;
+  color: var(--soft-white);
+  display: inline-block;
+}
+
+.info_tooltip_wrapper {
+  position: relative;
+  font-size: 20px !important;
+  vertical-align: middle;
+}
+
+.info_tooltip_wrapper .info_tooltip {
+  visibility: hidden;
+  width: 200px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 10px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.info_tooltip_wrapper .info_tooltip:after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.info_tooltip_wrapper:hover .info_tooltip {
+  visibility: visible;
+  opacity: 1;
 }
