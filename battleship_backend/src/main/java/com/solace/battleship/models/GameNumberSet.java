@@ -77,6 +77,19 @@ public class GameNumberSet {
         return true;
     }
 
+    public void printMarkedNumbers() {
+        System.out.println("Game number spots:");
+
+        for (int i = 0; i < numberSet.length; i++) {
+            for (int j = 0; j < numberSet[i].length; j++) {
+                if (numberSet[i][j].getIsHardMarked()) {
+                    System.out.print(numberSet[i][j].getValue() + " ");
+                }
+            }
+        }
+        System.out.println();
+    }
+
     private void initialize() {
         numberSet = new HousieNumber[9][10];
 

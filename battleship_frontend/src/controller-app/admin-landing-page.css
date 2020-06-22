@@ -84,3 +84,77 @@ li {
   visibility: visible;
   opacity: 1;
 }
+
+@media only screen and (max-device-width: 1366px) {
+  .players_message {
+    font-family: var(--message-text-font);
+    font-size: 12px;
+    color: var(--soft-white);
+  }
+
+  button.copy_link_button {
+    width: 35%;
+    height: 17px;
+    vertical-align: middle;
+  }
+
+  .prize_box {
+    vertical-align: middle;
+    width: calc(100% / 8);
+    height: 15px;
+    color: var(--soft-white);
+    display: inline-block;
+    font-size: 7px;
+    line-height: 15px;
+    border: 1px solid var(--soft-white);
+    border-radius: 5px;
+    margin: 1px;
+    cursor: pointer !important;
+  }
+
+  .auto_mode_section {
+    font: var(--subtitle-text-font);
+    font-size: 15px !important;
+    color: var(--soft-white);
+    display: inline-block;
+  }
+
+  .info_tooltip_wrapper {
+    position: relative;
+    font-size: 10px !important;
+    vertical-align: middle;
+  }
+
+  .info_tooltip_wrapper .info_tooltip {
+    visibility: hidden;
+    width: 100px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 3px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -30px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .info_tooltip_wrapper .info_tooltip:after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -3px;
+    border-width: 3px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+  }
+
+  .info_tooltip_wrapper:hover .info_tooltip {
+    visibility: visible;
+    opacity: 1;
+  }
+}

@@ -189,41 +189,6 @@ export class AdminDashboard {
     }, this.timer * 1000);
   }
 
-  startTimer() {
-    this.timerInterval = setInterval(() => {
-      if (this.pageState === GAME_OVER_STATE) {
-        return;
-      }
-
-      if (this.autoMode) {
-        this.timePassed = this.timePassed += 1;
-        this.timeLeft = this.TIME_LIMIT - this.timePassed;
-
-        if (this.timeLeft == 0) {
-          // this.chooseNextNumberEvent();
-          // this.timeLeft = this.TIME_LIMIT;
-          // this.timePassed = 0;
-          document.getElementById("base-timer-path-remaining").setAttribute("stroke-dasharray", `0 283`);
-        } else {
-          this.setCircleDasharray();
-        }
-      }
-    }, 1000);
-  }
-
-  // Divides time left by the defined time limit.
-  calculateTimeFraction() {
-    const rawTimeFraction = this.timeLeft / this.TIME_LIMIT;
-    return rawTimeFraction - (1 / this.TIME_LIMIT) * (1 - rawTimeFraction);
-  }
-
-  // Update the dasharray value as time passes, starting with 283
-  setCircleDasharray() {
-    const circleDasharray = `${(this.calculateTimeFraction() * 283).toFixed(0)} 283`;
-    // const circleDasharray = `0 283`;
-    document.getElementById("base-timer-path-remaining").setAttribute("stroke-dasharray", circleDasharray);
-  }
-
   detached() {
     // Unsubscribe from all UPDATE-PRIZE-STATUS events
     this.solaceClient.unsubscribe(`${this.topicPrefix}/UPDATE-PRIZE-STATUS/CONTROLLER`);

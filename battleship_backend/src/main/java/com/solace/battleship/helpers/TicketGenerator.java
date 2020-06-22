@@ -131,8 +131,7 @@ public class TicketGenerator {
 
             if (currTicketRow % 3 == 0) {
                 playerTickets.add(ticket);
-                ticket.printTicket();
-                System.out.println();
+
                 ticket = new Ticket(ticketNumber++);
                 currTicketRow = 0;
             }

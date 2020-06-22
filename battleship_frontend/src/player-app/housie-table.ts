@@ -83,11 +83,9 @@ export class HousieTable {
       (msg) => {
         let gameStart: GameStart = JSON.parse(msg.getBinaryAttachment());
         if (gameStart.success) {
-          this.loading(() => {
-            this.pageState = IN_PROGRESS_STATE;
+          this.pageState = IN_PROGRESS_STATE;
 
-            this.prizes = gameStart.gameNumberSet.prizes;
-          });
+          this.prizes = gameStart.gameNumberSet.prizes;
         }
       }
     );
@@ -168,18 +166,6 @@ export class HousieTable {
       .catch((err) => {
         this.error = err;
       });
-  }
-
-  loading(callback) {
-    var timeleft = 3;
-    var downloadTimer = setInterval(() => {
-      if (timeleft <= 0) {
-        clearInterval(downloadTimer);
-        callback();
-      }
-      this.countdown += 1;
-      timeleft -= 1;
-    }, 1000);
   }
 
   /**

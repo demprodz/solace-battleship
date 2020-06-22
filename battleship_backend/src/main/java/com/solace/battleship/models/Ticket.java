@@ -79,9 +79,24 @@ public class Ticket {
 	public void printTicket() {
 		for (int i = 0; i < ticketMatrix.length; i++) {
 			for (int j = 0; j < ticketMatrix[0].length; j++) {
-				System.out.print(ticketMatrix[i][j] + " ");
+				System.out.print(ticketMatrix[i][j].getValue() + "("
+						+ new Boolean(ticketMatrix[i][j].getIsMarked()).toString() + ") ");
 			}
 			System.out.println();
 		}
+	}
+
+	public void printMarkedSpots() {
+		System.out.println("Marked spots:");
+
+		for (int i = 0; i < ticketMatrix.length; i++) {
+			for (int j = 0; j < ticketMatrix[0].length; j++) {
+				if (ticketMatrix[i][j] != null && ticketMatrix[i][j].getIsMarked()) {
+					System.out.print(ticketMatrix[i][j].getValue() + " ");
+				}
+			}
+			System.out.println();
+		}
+		System.out.println();
 	}
 }

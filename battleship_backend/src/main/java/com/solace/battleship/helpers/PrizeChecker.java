@@ -27,6 +27,10 @@ public class PrizeChecker {
             return PrizeCheckerResponse.SUCCESS;
         }
 
+        System.out.println("Prize Submit Failure - details below...");
+        System.out.println(prize.getPrizeName());
+        gameNumberSet.printMarkedNumbers();
+        ticket.printMarkedSpots();
         return PrizeCheckerResponse.FAILURE;
     }
 }

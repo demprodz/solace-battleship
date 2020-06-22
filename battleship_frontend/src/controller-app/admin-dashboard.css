@@ -79,3 +79,57 @@
   visibility: visible;
   opacity: 1;
 }
+
+@media only screen and (max-device-width: 1366px) {
+  .master_board_square {
+    height: 25px;
+    width: 25px;
+    background: white;
+    border: 1px solid black;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 10px;
+    line-height: 25px;
+    text-align: center;
+  }
+
+  .dashboard_prize_section {
+    width: 200px;
+    margin: 0 auto;
+    margin-top: 25px;
+  }
+
+  .dashboard-prize {
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: left;
+    height: 23px;
+    line-height: 23px;
+    cursor: default !important;
+    color: var(--soft-white);
+    border: 1px solid var(--soft-white);
+    border-radius: 5px;
+    font: var(--subtitle-text-font);
+    font-size: 23px;
+    position: relative;
+  }
+
+  .dashboard-prize .prize_tooltip {
+    visibility: hidden;
+    width: 60px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 3px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -30px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+}
