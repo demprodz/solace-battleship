@@ -12,6 +12,7 @@ import com.solace.battleship.models.PrizeCheckerResponse;
 public class PrizeSubmitResult {
     private String sessionId;
     private String playerId;
+    private String playerName;
     private int ticket;
     private int selectedPrizeIndex;
     private boolean success;
@@ -21,22 +22,23 @@ public class PrizeSubmitResult {
     public PrizeSubmitResult() {
     }
 
-    public PrizeSubmitResult(String sessionId, String playerId, boolean success, String returnMessage) {
+    public PrizeSubmitResult(String sessionId, String playerId, String playerName, int ticket, int selectedPrizeIndex,
+            boolean success, String returnMessage, PrizeCheckerResponse responseType) {
         this.sessionId = sessionId;
         this.playerId = playerId;
-        this.success = success;
-        this.returnMessage = returnMessage;
-    }
-
-    public PrizeSubmitResult(String sessionId, String playerId, int ticket, int selectedPrizeIndex, boolean success,
-            String returnMessage, PrizeCheckerResponse responseType) {
-        this.sessionId = sessionId;
-        this.playerId = playerId;
+        this.playerName = playerName;
         this.ticket = ticket;
         this.selectedPrizeIndex = selectedPrizeIndex;
         this.success = success;
         this.returnMessage = returnMessage;
         this.responseType = responseType;
+    }
+
+    public PrizeSubmitResult(String sessionId, String playerId, boolean success, String returnMessage) {
+        this.sessionId = sessionId;
+        this.playerId = playerId;
+        this.success = success;
+        this.returnMessage = returnMessage;
     }
 
     public String getSessionId() {
@@ -53,6 +55,14 @@ public class PrizeSubmitResult {
 
     public void setPlayerId(String playerId) {
         this.playerId = playerId;
+    }
+
+    public String getPlayerName() {
+        return this.playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
     }
 
     public int getTicket() {
@@ -91,6 +101,14 @@ public class PrizeSubmitResult {
         this.returnMessage = returnMessage;
     }
 
+    public PrizeCheckerResponse getResponseType() {
+        return this.responseType;
+    }
+
+    public void setResponseType(PrizeCheckerResponse responseType) {
+        this.responseType = responseType;
+    }
+
     public PrizeSubmitResult sessionId(String sessionId) {
         this.sessionId = sessionId;
         return this;
@@ -98,6 +116,11 @@ public class PrizeSubmitResult {
 
     public PrizeSubmitResult playerId(String playerId) {
         this.playerId = playerId;
+        return this;
+    }
+
+    public PrizeSubmitResult playerName(String playerName) {
+        this.playerName = playerName;
         return this;
     }
 
@@ -121,14 +144,6 @@ public class PrizeSubmitResult {
         return this;
     }
 
-    public PrizeCheckerResponse getResponseType() {
-        return this.responseType;
-    }
-
-    public void setResponseType(PrizeCheckerResponse responseType) {
-        this.responseType = responseType;
-    }
-
     public PrizeSubmitResult responseType(PrizeCheckerResponse responseType) {
         this.responseType = responseType;
         return this;
@@ -143,20 +158,25 @@ public class PrizeSubmitResult {
         }
         PrizeSubmitResult prizeSubmitResult = (PrizeSubmitResult) o;
         return Objects.equals(sessionId, prizeSubmitResult.sessionId)
-                && Objects.equals(playerId, prizeSubmitResult.playerId) && ticket == prizeSubmitResult.ticket
+                && Objects.equals(playerId, prizeSubmitResult.playerId)
+                && Objects.equals(playerName, prizeSubmitResult.playerName) && ticket == prizeSubmitResult.ticket
                 && selectedPrizeIndex == prizeSubmitResult.selectedPrizeIndex && success == prizeSubmitResult.success
-                && Objects.equals(returnMessage, prizeSubmitResult.returnMessage);
+                && Objects.equals(returnMessage, prizeSubmitResult.returnMessage)
+                && Objects.equals(responseType, prizeSubmitResult.responseType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sessionId, playerId, ticket, selectedPrizeIndex, success, returnMessage);
+        return Objects.hash(sessionId, playerId, playerName, ticket, selectedPrizeIndex, success, returnMessage,
+                responseType);
     }
 
     @Override
     public String toString() {
-        return "{" + " sessionId='" + getSessionId() + "'" + ", playerId='" + getPlayerId() + "'" + ", ticket='"
-                + getTicket() + "'" + ", selectedPrizeIndex='" + getSelectedPrizeIndex() + "'" + ", success='"
-                + isSuccess() + "'" + ", returnMessage='" + getReturnMessage() + "'" + "}";
+        return "{" + " sessionId='" + getSessionId() + "'" + ", playerId='" + getPlayerId() + "'" + ", playerName='"
+                + getPlayerName() + "'" + ", ticket='" + getTicket() + "'" + ", selectedPrizeIndex='"
+                + getSelectedPrizeIndex() + "'" + ", success='" + isSuccess() + "'" + ", returnMessage='"
+                + getReturnMessage() + "'" + ", responseType='" + getResponseType() + "'" + "}";
     }
+
 }

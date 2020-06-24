@@ -99,6 +99,7 @@ export class AdminDashboardPageReloadResult {
   gameNumberSet: GameNumberSet;
   prizes: IPrize[];
   timer: number;
+  numPrizeModePlayers: number;
   success: boolean;
 }
 
@@ -207,11 +208,22 @@ export class PrizeSubmitEvent {
 export class PrizeSubmitResult {
   sessionId: string;
   playerId: string;
+  playerName: string;
   ticket: number;
   selectedPrizeIndex: number;
   success: boolean;
   returnMessage: string;
   responseType: string;
+}
+
+export class PrizeModeRequest {
+  sessionId: string;
+  playerId: string;
+}
+
+export class PrizeModeResult {
+  success: boolean;
+  numPrizeModePlayers: number;
 }
 
 // CellState for the Board

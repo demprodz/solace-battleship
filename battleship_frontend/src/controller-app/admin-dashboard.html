@@ -3,7 +3,7 @@
   <require from="../common/scoreboard"></require>
   <div class="flex-column align__center w-100 h-100">
     <div show.bind="pageState ==='GAME_OVER_STATE'" class="margin-top-10px w-100 message-container">Game over</div>
-    <div class="main_section">
+    <div class="main_section ${prizeOnMode === true ? 'blurred' : ''}">
       <div class="side_sectional">
         <div class="dashboard_prize_section">
           <div class="prize_options_section">
@@ -32,12 +32,12 @@
         <div class="action-section margin-top-10px">
           <button
             class="landing-page__nav-button button-styling margin-top-10px margin-right-10px"
-            click.delegate="pageState !=='GAME_OVER_STATE' && autoMode == false ? chooseNextNumberEvent() : null"
+            click.delegate="pageState !=='GAME_OVER_STATE' && autoMode == false && prizeOnMode !== true ? chooseNextNumberEvent() : null"
           >
             Next
           </button>
-          <button class="landing-page__nav-button cancel-button-styling margin-top-10px margin-left-10px ${autoMode == true ? 'blue' : ''}" click.trigger="toggleAutoMode()">
-            ${autoMode == true ? "Auto Mode On" : "Auto Mode Off"}
+          <button class="landing-page__nav-button cancel-button-styling margin-top-10px margin-left-10px ${autoMode == true && prizeOnMode !== true ? 'blue' : ''}" click.trigger="toggleAutoMode()">
+            ${autoMode == true && prizeOnMode !== true? "Auto Mode On" : "Auto Mode Off"}
           </button>
         </div>
       </div>
@@ -54,5 +54,6 @@
         </div>
       </div>
     </div>
+    <div class="prize_message" hidden.bind="prizeOnMode !== true">Player(s) may be submitting a prize request...</div>
   </div>
 </template>

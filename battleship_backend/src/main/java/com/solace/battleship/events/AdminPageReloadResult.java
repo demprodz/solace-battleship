@@ -15,6 +15,7 @@ public class AdminPageReloadResult {
     private IPrize[] prizes;
     private GameNumberSet gameNumberSet;
     private int timer;
+    private int numPrizeModePlayers;
     private boolean success;
 
     public AdminPageReloadResult() {
@@ -22,11 +23,12 @@ public class AdminPageReloadResult {
     }
 
     public AdminPageReloadResult(boolean isGameInProgress, IPrize[] prizes, GameNumberSet gameNumberSet, int timer,
-            boolean success) {
+            int numPrizeModePlayers, boolean success) {
         this.isGameInProgress = isGameInProgress;
         this.prizes = prizes;
         this.gameNumberSet = gameNumberSet;
         this.timer = timer;
+        this.numPrizeModePlayers = numPrizeModePlayers;
         this.success = success;
     }
 
@@ -66,6 +68,14 @@ public class AdminPageReloadResult {
         this.timer = timer;
     }
 
+    public int getNumPrizeModePlayers() {
+        return this.numPrizeModePlayers;
+    }
+
+    public void setNumPrizeModePlayers(int numPrizeModePlayers) {
+        this.numPrizeModePlayers = numPrizeModePlayers;
+    }
+
     public boolean isSuccess() {
         return this.success;
     }
@@ -93,6 +103,16 @@ public class AdminPageReloadResult {
         return this;
     }
 
+    public AdminPageReloadResult timer(int timer) {
+        this.timer = timer;
+        return this;
+    }
+
+    public AdminPageReloadResult numPrizeModePlayers(int numPrizeModePlayers) {
+        this.numPrizeModePlayers = numPrizeModePlayers;
+        return this;
+    }
+
     public AdminPageReloadResult success(boolean success) {
         this.success = success;
         return this;
@@ -109,17 +129,21 @@ public class AdminPageReloadResult {
         return isGameInProgress == adminPageReloadResult.isGameInProgress
                 && Objects.equals(prizes, adminPageReloadResult.prizes)
                 && Objects.equals(gameNumberSet, adminPageReloadResult.gameNumberSet)
+                && timer == adminPageReloadResult.timer
+                && numPrizeModePlayers == adminPageReloadResult.numPrizeModePlayers
                 && success == adminPageReloadResult.success;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(isGameInProgress, prizes, gameNumberSet, success);
+        return Objects.hash(isGameInProgress, prizes, gameNumberSet, timer, numPrizeModePlayers, success);
     }
 
     @Override
     public String toString() {
         return "{" + " isGameInProgress='" + isIsGameInProgress() + "'" + ", prizes='" + getPrizes() + "'"
-                + ", gameNumberSet='" + getGameNumberSet() + "'" + ", success='" + isSuccess() + "'" + "}";
+                + ", gameNumberSet='" + getGameNumberSet() + "'" + ", timer='" + getTimer() + "'"
+                + ", numPrizeModePlayers='" + getNumPrizeModePlayers() + "'" + ", success='" + isSuccess() + "'" + "}";
     }
+
 }

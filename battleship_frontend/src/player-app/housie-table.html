@@ -44,9 +44,9 @@
       </div>
       <div class="side_sectional">
         <div class="player_section">${player.name}</div>
-        <div class="prize_section" mouseover.delegate="showPrizeOptions()" mouseout.delegate="hidePrizeOptions()">
+        <div class="prize_section" mouseover.delegate="pageState === 'IN_PROGRESS_STATE' && showPrizeOptions()" mouseout.delegate="hidePrizeOptions()">
           <div class="prize_section_half">
-            <button class="housie-table__nav-button button-styling margin-top-10px">Claim Prize</button>
+            <button class="housie-table__nav-button button-styling margin-top-10px ${pageState === 'IN_PROGRESS_STATE' ? '' : 'nopointer'}">Claim Prize</button>
             <div class="prize_options_section" hidden.bind="showPrizes !== true">
               <div
                 repeat.for="i of prizes.length"

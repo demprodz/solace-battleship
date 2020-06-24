@@ -59,6 +59,14 @@ spring:
           destination: SESSION-SEARCH-REQUESTS
           group: SOLACE-BATTLESHIP
           binder: solace_cloud
+        prizemode_on_request:
+          destination: PRIZEMODE-ON-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
+        prizemode_off_request:
+          destination: PRIZEMODE-OFF-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
       binders:
         solace_cloud:
           type: solace
@@ -115,6 +123,12 @@ spring:
           session_search_request:
             consumer:
               queueAdditionalSubscriptions: SOLACE/BATTLESHIP/SESSION-SEARCH-REQUEST
+          prizemode_on_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/PRIZEMODE-ON-REQUEST
+          prizemode_off_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/PRIZEMODE-OFF-REQUEST
 logging:
   level:
     root: INFO

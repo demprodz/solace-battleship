@@ -3,6 +3,7 @@ package com.solace.battleship.engine;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import com.solace.battleship.events.*;
@@ -32,6 +33,7 @@ public class GameSession {
   private HashMap<String, Player> players;
   private GameNumberSet numberSet;
   private int timer;
+  private HashSet<String> prizeModePlayers;
 
   public GameSession(String sessionId, String name, String playerJoinUrl) {
     this.sessionId = sessionId;
@@ -42,6 +44,7 @@ public class GameSession {
     this.players = new HashMap<String, Player>();
     this.numberSet = new GameNumberSet();
     this.timer = 10;
+    this.prizeModePlayers = new HashSet<String>();
   }
 
   public String getPlayerJoinUrl() {
@@ -66,6 +69,22 @@ public class GameSession {
 
   public void setTimer(int timer) {
     this.timer = timer;
+  }
+
+  public void setPrizeModePlayer(String playerId) {
+    if (!players.containsKey(playerId)) {
+      return;
+    }
+
+    prizeModePlayers.add(playerId);
+  }
+
+  public void removePrizeModePlayer(String playerId) {
+    prizeModePlayers.remove(playerId);
+  }
+
+  public int getNumPrizeModePlayers() {
+    return prizeModePlayers.size();
   }
 
   public GameStart getGameStart(boolean isAutoMode, String selectedTimer, int[] disabledPrizesIndexList) {
@@ -132,14 +151,14 @@ public class GameSession {
   }
 
   public PrizeSubmitResult submitPrizeRequest(PrizeSubmitRequest request) {
-    PrizeCheckerResponse response = PrizeChecker.validatePrizeRequest(request, players.get(request.getPlayerId()),
-        this.numberSet);
+    Player player = players.get(request.getPlayerId());
+    PrizeCheckerResponse response = PrizeChecker.validatePrizeRequest(request, player, this.numberSet);
 
     if (response.equals(PrizeCheckerResponse.FAILURE)) {
       this.players.get(request.getPlayerId()).getTicketSet().getTicket(request.getTicket()).setIsEliminated(true);
     }
 
-    return new PrizeSubmitResult(request.getSessionId(), request.getPlayerId(), request.getTicket(),
+    return new PrizeSubmitResult(request.getSessionId(), player.getId(), player.getName(), request.getTicket(),
         request.getSelectedPrizeIndex(), response.equals(PrizeCheckerResponse.SUCCESS), response.message, response);
   }
 

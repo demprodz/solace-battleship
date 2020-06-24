@@ -60,6 +60,7 @@ body {
   border-bottom-color: grey;
   border-bottom-style: solid;
   border-bottom-width: 1px;
+  z-index: 10000;
 }
 
 .main-layout__content {
@@ -415,6 +416,7 @@ select.options_dropdown {
 }
 
 .main_section {
+  position: relative;
   display: block;
   margin-top: 50px;
   width: 100%;
@@ -842,6 +844,14 @@ html {
 
 .blue {
   background-color: rgb(60, 164, 255) !important;
+}
+
+.blurred {
+  opacity: 0.3;
+}
+
+.nopointer {
+  cursor: default !important;
 }
 
 @media only screen and (max-device-width: 1366px) {

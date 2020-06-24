@@ -15,6 +15,7 @@ import {
   AdminDashboardPageReloadResult,
   NextNumberConfirmEvent,
   NextNumberConfirmResult,
+  PrizeModeResult,
 } from "../common/events";
 import { bindable, inject } from "aurelia-framework";
 import { SolaceClient } from "common/solace-client";
@@ -28,6 +29,7 @@ export class AdminDashboard {
   private pageState: string = IN_PROGRESS_STATE;
   private currentNumber: number;
   private autoMode: boolean = false;
+  private prizeOnMode: boolean = false;
   private timer: number = 10;
   private sessionId: string;
   private topicPrefix: string;
@@ -105,6 +107,19 @@ export class AdminDashboard {
       }
     );
 
+    //Subscribe to the PRIZEMODE-ON-REPLY event
+    this.solaceClient.subscribe(
+      `${this.topicPrefix}/PRIZEMODE-REPLY/CONTROLLER`,
+      // game start event handler callback
+      (msg) => {
+        let prizeModeResult: PrizeModeResult = JSON.parse(msg.getBinaryAttachment());
+        console.log(prizeModeResult);
+        if (prizeModeResult.success) {
+          this.prizeOnMode = prizeModeResult.numPrizeModePlayers > 0;
+        }
+      }
+    );
+
     this.chooseNextNumberEvent();
     this.autoModeCaller();
   }
@@ -127,6 +142,7 @@ export class AdminDashboard {
           this.prizes = adminDashboardPageReloadResult.prizes;
           this.timer = adminDashboardPageReloadResult.timer;
           this.autoMode = false;
+          this.prizeOnMode = adminDashboardPageReloadResult.numPrizeModePlayers > 0;
         }
 
         this.prepareSolaceSubscriptions();
@@ -140,6 +156,10 @@ export class AdminDashboard {
    * Submit request to choose the next random number
    */
   chooseNextNumberEvent() {
+    if (this.prizeOnMode === true) {
+      return;
+    }
+
     let nextNumberChooseEvent: NextNumberChooseEvent = new NextNumberChooseEvent();
     nextNumberChooseEvent.sessionId = this.sessionId;
 
@@ -183,7 +203,7 @@ export class AdminDashboard {
         return;
       }
 
-      if (this.autoMode) {
+      if (this.autoMode && !this.prizeOnMode) {
         this.chooseNextNumberEvent();
       }
     }, this.timer * 1000);

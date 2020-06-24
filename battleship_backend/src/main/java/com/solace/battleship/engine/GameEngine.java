@@ -146,7 +146,9 @@ public class GameEngine implements IGameEngine {
     IPrize[] prizes = session.getPrizes();
     GameNumberSet gameNumberSet = session.getGameNumberSet();
     int timer = session.getTimer();
-    return new AdminPageReloadResult(isGameInProgress, prizes, gameNumberSet, timer, gameNumberSet != null);
+    int numPrizeModePlayers = session.getNumPrizeModePlayers();
+    return new AdminPageReloadResult(isGameInProgress, prizes, gameNumberSet, timer, numPrizeModePlayers,
+        gameNumberSet != null);
   }
 
   @Override
@@ -247,6 +249,30 @@ public class GameEngine implements IGameEngine {
       return new NextNumberConfirmResult(nextNumberConfirmRequest.getSessionId(), false, SESSION_DOES_NOT_EXIST_ERROR);
     } else {
       return session.confirmNumber(nextNumberConfirmRequest.getRowIndex(), nextNumberConfirmRequest.getColumnIndex());
+    }
+  }
+
+  @Override
+  public PrizeModeResult requestToTurnPrizeModeOn(PrizeModeRequest request) {
+    GameSession session = gameSessionMap.get(request.getSessionId());
+
+    if (session == null) {
+      return new PrizeModeResult();
+    } else {
+      session.setPrizeModePlayer(request.getPlayerId());
+      return new PrizeModeResult(true, session.getNumPrizeModePlayers());
+    }
+  }
+
+  @Override
+  public PrizeModeResult requestToTurnPrizeModeOff(PrizeModeRequest request) {
+    GameSession session = gameSessionMap.get(request.getSessionId());
+
+    if (session == null) {
+      return new PrizeModeResult();
+    } else {
+      session.removePrizeModePlayer(request.getPlayerId());
+      return new PrizeModeResult(true, session.getNumPrizeModePlayers());
     }
   }
 }

@@ -10,6 +10,7 @@ import {
   PlayerPageReloadResult,
   PrizeStatusResult,
   NextNumberConfirmResult,
+  PrizeModeRequest,
 } from "./../common/events";
 import { WAITING_STATE, IN_PROGRESS_STATE, GAME_OVER_STATE } from "./../common/constants";
 import { bindable, inject } from "aurelia-framework";
@@ -75,6 +76,18 @@ export class HousieTable {
 
     //WARM-UP THE PRIZE-SUBMIT-REPLY SUBSCRIPTION
     this.solaceClient.subscribeReply(`${this.topicPrefix}/PRIZE-SUBMIT-REPLY/${this.player.id}/CONTROLLER`);
+
+    //Subscribe to the PRIZE-SUBMIT-REPLY event
+    this.solaceClient.subscribe(
+      `${this.topicPrefix}/PRIZE-SUBMIT-REPLY/*/CONTROLLER`,
+      // game start event handler callback
+      (msg) => {
+        let prizeSubmitResult: PrizeSubmitResult = JSON.parse(msg.getBinaryAttachment());
+        if (prizeSubmitResult.playerId !== this.player.id && prizeSubmitResult.responseType === "SUCCESS") {
+          alert(prizeSubmitResult.playerName + " has been awarded " + this.prizes[prizeSubmitResult.selectedPrizeIndex].prizeName + ".");
+        }
+      }
+    );
 
     //Subscribe to the GAME-START event
     this.solaceClient.subscribe(
@@ -182,7 +195,6 @@ export class HousieTable {
     tileSelectEvent.row = row;
     tileSelectEvent.column = column;
 
-    //Send the request to set the board
     this.solaceClient
       .sendRequest(`${this.topicPrefix}/TILE-SELECT-REQUEST/${this.player.id}`, JSON.stringify(tileSelectEvent), `${this.topicPrefix}/TILE-SELECT-REPLY/${this.player.id}/CONTROLLER`)
       .then((msg: any) => {
@@ -213,12 +225,28 @@ export class HousieTable {
     this.selectTicketMode = true;
     this.showPrizes = false;
 
+    let prizeModeEvent: PrizeModeRequest = new PrizeModeRequest();
+    prizeModeEvent.sessionId = this.player.sessionId;
+    prizeModeEvent.playerId = this.player.id;
+
+    this.solaceClient.sendRequest(`${this.topicPrefix}/PRIZEMODE-ON-REQUEST`, JSON.stringify(prizeModeEvent), `${this.topicPrefix}/PRIZEMODE-REPLY/CONTROLLER`).catch((err) => {
+      this.error = err;
+    });
+
     alert("You have chosen to claim " + this.prizes[prizeIndex].prizeName + ". Click on the winning ticket to claim your prize! Or choose Cancel to undo this action.");
   }
 
   ticketModeOff() {
     this.selectedPrizeIndex = null;
     this.selectTicketMode = false;
+
+    let prizeModeEvent: PrizeModeRequest = new PrizeModeRequest();
+    prizeModeEvent.sessionId = this.player.sessionId;
+    prizeModeEvent.playerId = this.player.id;
+
+    this.solaceClient.sendRequest(`${this.topicPrefix}/PRIZEMODE-OFF-REQUEST`, JSON.stringify(prizeModeEvent), `${this.topicPrefix}/PRIZEMODE-REPLY/CONTROLLER`).catch((err) => {
+      this.error = err;
+    });
   }
 
   submitPrizeRequest(ticket: number) {
