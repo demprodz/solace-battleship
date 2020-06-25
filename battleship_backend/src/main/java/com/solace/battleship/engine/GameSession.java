@@ -152,14 +152,27 @@ public class GameSession {
 
   public PrizeSubmitResult submitPrizeRequest(PrizeSubmitRequest request) {
     Player player = players.get(request.getPlayerId());
-    PrizeCheckerResponse response = PrizeChecker.validatePrizeRequest(request, player, this.numberSet);
-
-    if (response.equals(PrizeCheckerResponse.FAILURE)) {
-      this.players.get(request.getPlayerId()).getTicketSet().getTicket(request.getTicket()).setIsEliminated(true);
-    }
+    PrizeCheckerResponse response = PrizeChecker.validatePrizeRequest(request, player, this.numberSet, false);
 
     return new PrizeSubmitResult(request.getSessionId(), player.getId(), player.getName(), request.getTicket(),
         request.getSelectedPrizeIndex(), response.equals(PrizeCheckerResponse.SUCCESS), response.message, response);
+  }
+
+  public PrizeSubmitResult submitOverridePrizeRequest(PrizeSubmitRequest request) {
+    Player player = players.get(request.getPlayerId());
+    PrizeCheckerResponse response = PrizeChecker.validatePrizeRequest(request, player, this.numberSet, true);
+
+    return new PrizeSubmitResult(request.getSessionId(), player.getId(), player.getName(), request.getTicket(),
+        request.getSelectedPrizeIndex(), response.equals(PrizeCheckerResponse.SUCCESS), response.message, response);
+  }
+
+  public PrizeSubmitResult confirmDeniedPrizeRequest(PrizeSubmitRequest request) {
+    Player player = players.get(request.getPlayerId());
+
+    this.players.get(request.getPlayerId()).getTicketSet().getTicket(request.getTicket()).setIsEliminated(true);
+
+    return new PrizeSubmitResult(request.getSessionId(), player.getId(), player.getName(), request.getTicket(),
+        request.getSelectedPrizeIndex(), false, PrizeCheckerResponse.FAILURE.message, PrizeCheckerResponse.FAILURE);
   }
 
   public boolean updatePrizeStatus(PrizeSubmitRequest request) {

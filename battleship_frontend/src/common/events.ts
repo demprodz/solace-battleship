@@ -203,6 +203,7 @@ export class PrizeSubmitEvent {
   playerId: string;
   ticket: number;
   selectedPrizeIndex: number;
+  isConfirmedDenial: boolean;
 }
 
 export class PrizeSubmitResult {

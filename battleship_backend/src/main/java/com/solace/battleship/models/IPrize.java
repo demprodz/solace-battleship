@@ -7,6 +7,8 @@ import com.solace.battleship.events.Player;
 public interface IPrize {
     public boolean checkPatternMatch(Player player, Ticket ticket, GameNumberSet numberSet);
 
+    public void addWinner(String playerName);
+
     public String getPrizeName();
 
     public String getAbbreviatedName();

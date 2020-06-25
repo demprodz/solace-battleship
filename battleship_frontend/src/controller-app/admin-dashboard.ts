@@ -16,6 +16,8 @@ import {
   NextNumberConfirmEvent,
   NextNumberConfirmResult,
   PrizeModeResult,
+  PrizeSubmitResult,
+  PrizeSubmitEvent,
 } from "../common/events";
 import { bindable, inject } from "aurelia-framework";
 import { SolaceClient } from "common/solace-client";
@@ -113,9 +115,44 @@ export class AdminDashboard {
       // game start event handler callback
       (msg) => {
         let prizeModeResult: PrizeModeResult = JSON.parse(msg.getBinaryAttachment());
-        console.log(prizeModeResult);
+
         if (prizeModeResult.success) {
           this.prizeOnMode = prizeModeResult.numPrizeModePlayers > 0;
+        }
+      }
+    );
+
+    //Subscribe to the PRIZE-SUBMIT-REPLY event
+    this.solaceClient.subscribe(
+      `${this.topicPrefix}/PRIZE-SUBMIT-REPLY/*/CONTROLLER`,
+      // game start event handler callback
+      (msg) => {
+        let prizeSubmitResult: PrizeSubmitResult = JSON.parse(msg.getBinaryAttachment());
+
+        if (prizeSubmitResult.responseType === "FAILURE") {
+          const prizeOverride = confirm(
+            prizeSubmitResult.playerName +
+              " was denied " +
+              this.prizes[prizeSubmitResult.selectedPrizeIndex].prizeName +
+              ". If you think they were incorrectly denied and deserve the prize, then press OK. If not, press Cancel."
+          );
+
+          //WARM-UP THE NEXTNUMBER-CONFIRM-REPLY SUBSCRIPTION
+          this.solaceClient.subscribeReply(`${this.topicPrefix}/PRIZE-OVERRIDE-REPLY/${prizeSubmitResult.playerId}/CONTROLLER`);
+
+          let prizeOverrideRequest: PrizeSubmitEvent = new PrizeSubmitEvent();
+          prizeOverrideRequest.sessionId = this.sessionId;
+          prizeOverrideRequest.playerId = prizeSubmitResult.playerId;
+          prizeOverrideRequest.ticket = prizeSubmitResult.ticket;
+          prizeOverrideRequest.selectedPrizeIndex = prizeSubmitResult.selectedPrizeIndex;
+          prizeOverrideRequest.isConfirmedDenial = !prizeOverride;
+
+          //Send the request to override prize denial, award prize to player.
+          this.solaceClient
+            .sendRequest(`${this.topicPrefix}/PRIZE-OVERRIDE-REQUEST`, JSON.stringify(prizeOverrideRequest), `${this.topicPrefix}/PRIZE-OVERRIDE-REPLY/${prizeSubmitResult.playerId}/CONTROLLER`)
+            .catch((err) => {
+              this.error = err;
+            });
         }
       }
     );
@@ -214,7 +251,13 @@ export class AdminDashboard {
     this.solaceClient.unsubscribe(`${this.topicPrefix}/UPDATE-PRIZE-STATUS/CONTROLLER`);
     // Unsubscribe from all NEXTNUMBER-CHOOSE-REPLY events
     this.solaceClient.unsubscribe(`${this.topicPrefix}/NEXTNUMBER-CHOOSE-REPLY/CONTROLLER`);
+    // Unsubscribe from all NEXTNUMBER-CONFIRM-REPLY events
+    this.solaceClient.unsubscribe(`${this.topicPrefix}/NEXTNUMBER-CONFIRM-REPLY/CONTROLLER`);
     // Unsubscribe from all ADMIN-PAGE-REPLY events
     this.solaceClient.unsubscribe(`${this.topicPrefix}/ADMIN-PAGE-REPLY/CONTROLLER`);
+    // Unsubscribe from all PRIZEMODE-REPLY events
+    this.solaceClient.unsubscribe(`${this.topicPrefix}/PRIZEMODE-REPLY/CONTROLLER`);
+    // Unsubscribe from all PRIZE-SUBMIT-REPLY events
+    this.solaceClient.unsubscribe(`${this.topicPrefix}/PRIZE-SUBMIT-REPLY/*/CONTROLLER`);
   }
 }

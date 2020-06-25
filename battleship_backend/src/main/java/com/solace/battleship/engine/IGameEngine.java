@@ -73,6 +73,10 @@ public interface IGameEngine {
    */
   public PrizeSubmitResult requestToSubmitPrize(PrizeSubmitRequest request);
 
+  public PrizeSubmitResult requestToOverridePrize(PrizeSubmitRequest request);
+
+  public PrizeSubmitResult requestToConfirmDeniedPrize(PrizeSubmitRequest request);
+
   public boolean updatePrizeStatus(PrizeSubmitRequest request);
 
   public PrizeStatusResult getPrizeStatus(String sessionId);

@@ -12,15 +12,18 @@ public class PrizeSubmitRequest {
     private String playerId;
     private int ticket;
     private int selectedPrizeIndex;
+    private boolean isConfirmedDenial;
 
     public PrizeSubmitRequest() {
     }
 
-    public PrizeSubmitRequest(String sessionId, String playerId, int ticket, int selectedPrizeIndex) {
+    public PrizeSubmitRequest(String sessionId, String playerId, int ticket, int selectedPrizeIndex,
+            boolean isConfirmedDenial) {
         this.sessionId = sessionId;
         this.playerId = playerId;
         this.ticket = ticket;
         this.selectedPrizeIndex = selectedPrizeIndex;
+        this.isConfirmedDenial = isConfirmedDenial;
     }
 
     public String getSessionId() {
@@ -55,6 +58,18 @@ public class PrizeSubmitRequest {
         this.selectedPrizeIndex = selectedPrizeIndex;
     }
 
+    public boolean isIsConfirmedDenial() {
+        return this.isConfirmedDenial;
+    }
+
+    public boolean getIsConfirmedDenial() {
+        return this.isConfirmedDenial;
+    }
+
+    public void setIsConfirmedDenial(boolean isConfirmedDenial) {
+        this.isConfirmedDenial = isConfirmedDenial;
+    }
+
     public PrizeSubmitRequest sessionId(String sessionId) {
         this.sessionId = sessionId;
         return this;
@@ -75,6 +90,11 @@ public class PrizeSubmitRequest {
         return this;
     }
 
+    public PrizeSubmitRequest isConfirmedDenial(boolean isConfirmedDenial) {
+        this.isConfirmedDenial = isConfirmedDenial;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this)
@@ -85,18 +105,20 @@ public class PrizeSubmitRequest {
         PrizeSubmitRequest prizeSubmitRequest = (PrizeSubmitRequest) o;
         return Objects.equals(sessionId, prizeSubmitRequest.sessionId)
                 && Objects.equals(playerId, prizeSubmitRequest.playerId) && ticket == prizeSubmitRequest.ticket
-                && selectedPrizeIndex == prizeSubmitRequest.selectedPrizeIndex;
+                && selectedPrizeIndex == prizeSubmitRequest.selectedPrizeIndex
+                && isConfirmedDenial == prizeSubmitRequest.isConfirmedDenial;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sessionId, playerId, ticket, selectedPrizeIndex);
+        return Objects.hash(sessionId, playerId, ticket, selectedPrizeIndex, isConfirmedDenial);
     }
 
     @Override
     public String toString() {
         return "{" + " sessionId='" + getSessionId() + "'" + ", playerId='" + getPlayerId() + "'" + ", ticket='"
-                + getTicket() + "'" + ", selectedPrizeIndex='" + getSelectedPrizeIndex() + "'" + "}";
+                + getTicket() + "'" + ", selectedPrizeIndex='" + getSelectedPrizeIndex() + "'" + ", isConfirmedDenial='"
+                + isIsConfirmedDenial() + "'" + "}";
     }
 
 }

@@ -67,6 +67,10 @@ spring:
           destination: PRIZEMODE-OFF-REQUESTS
           group: SOLACE-BATTLESHIP
           binder: solace_cloud
+        prize_override_request:
+          destination: PRIZE-OVERRIDE-REQUESTS
+          group: SOLACE-BATTLESHIP
+          binder: solace_cloud
       binders:
         solace_cloud:
           type: solace
@@ -129,6 +133,9 @@ spring:
           prizemode_off_request:
             consumer:
               queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/PRIZEMODE-OFF-REQUEST
+          prize_override_request:
+            consumer:
+              queueAdditionalSubscriptions: SOLACE/BATTLESHIP/*/PRIZE-OVERRIDE-REQUEST
 logging:
   level:
     root: INFO

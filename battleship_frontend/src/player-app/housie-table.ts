@@ -150,6 +150,26 @@ export class HousieTable {
         }
       }
     );
+
+    //Subscribe to the PRIZE-OVERRIDE-REPLY event
+    this.solaceClient.subscribe(
+      `${this.topicPrefix}/PRIZE-OVERRIDE-REPLY/${this.player.id}/CONTROLLER`,
+      // game start event handler callback
+      (msg) => {
+        let prizeSubmitResult: PrizeSubmitResult = JSON.parse(msg.getBinaryAttachment());
+
+        if (prizeSubmitResult.responseType === "SUCCESS") {
+          alert("You've been awarded " + this.prizes[prizeSubmitResult.selectedPrizeIndex].prizeName + ". Congrats!");
+        } else if (prizeSubmitResult.responseType === "FAILURE") {
+          this.player.ticketSet.tickets[prizeSubmitResult.ticket].isEliminated = true;
+          alert(prizeSubmitResult.returnMessage);
+        } else if (prizeSubmitResult.responseType === "ALREADY_TAKEN") {
+          alert(prizeSubmitResult.returnMessage);
+        } else {
+          alert(prizeSubmitResult.returnMessage);
+        }
+      }
+    );
   }
 
   reloadPlayerPageFromServer() {
@@ -172,6 +192,8 @@ export class HousieTable {
 
           this.pageState = playerPageReloadResult.isGameStarted ? IN_PROGRESS_STATE : WAITING_STATE;
           this.prizes = playerPageReloadResult.prizes;
+
+          this.ticketModeOff();
         }
 
         this.prepareSolaceSubscriptions();
@@ -260,16 +282,12 @@ export class HousieTable {
       .sendRequest(`${this.topicPrefix}/PRIZE-SUBMIT-REQUEST/${this.player.id}`, JSON.stringify(prizeSubmitEvent), `${this.topicPrefix}/PRIZE-SUBMIT-REPLY/${this.player.id}/CONTROLLER`)
       .then((msg: any) => {
         let prizeSubmitResult: PrizeSubmitResult = JSON.parse(msg.getBinaryAttachment());
-        console.log(prizeSubmitResult);
-        console.log(prizeSubmitResult.responseType);
+
         if (prizeSubmitResult.responseType === "SUCCESS") {
           alert("You've been awarded " + this.prizes[prizeSubmitResult.selectedPrizeIndex].prizeName + ". Congrats!");
-        } else if (prizeSubmitResult.responseType === "FAILURE") {
-          this.player.ticketSet.tickets[prizeSubmitResult.ticket].isEliminated = true;
-          alert(prizeSubmitResult.returnMessage);
         } else if (prizeSubmitResult.responseType === "ALREADY_TAKEN") {
           alert(prizeSubmitResult.returnMessage);
-        } else {
+        } else if (prizeSubmitResult.responseType === "USER_ALREADY_TAKEN") {
           alert(prizeSubmitResult.returnMessage);
         }
       })

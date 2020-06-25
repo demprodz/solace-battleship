@@ -48,17 +48,19 @@ public class FullHousePrize implements IPrize {
         }
 
         if (markedSpots == 15) {
-            numClaimedPrizes++;
-            winners.add(player.getName());
-
-            if (numPrizes == numClaimedPrizes) {
-                isTaken = true;
-            }
-
             return true;
         }
 
         return false;
+    }
+
+    public void addWinner(String playerName) {
+        numClaimedPrizes++;
+        winners.add(playerName);
+
+        if (numPrizes == numClaimedPrizes) {
+            isTaken = true;
+        }
     }
 
     public int getNumPrizes() {

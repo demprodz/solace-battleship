@@ -9,7 +9,7 @@ import com.solace.battleship.models.Ticket;
 
 public class PrizeChecker {
     public static PrizeCheckerResponse validatePrizeRequest(PrizeSubmitRequest request, Player player,
-            GameNumberSet gameNumberSet) {
+            GameNumberSet gameNumberSet, boolean isOverride) {
         IPrize prize = gameNumberSet.getPrizes()[request.getSelectedPrizeIndex()];
 
         if (prize.getIsTaken()) {
@@ -22,7 +22,8 @@ public class PrizeChecker {
             return PrizeCheckerResponse.USER_ALREADY_TAKEN;
         }
 
-        if (prize.checkPatternMatch(player, ticket, gameNumberSet)) {
+        if (isOverride || prize.checkPatternMatch(player, ticket, gameNumberSet)) {
+            prize.addWinner(player.getName());
             ticket.addClaimedPrize(prize.getPrizeName());
             return PrizeCheckerResponse.SUCCESS;
         }

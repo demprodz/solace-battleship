@@ -56,6 +56,11 @@ export class Join {
       return;
     }
 
+    if (this.numTickets < 1 || this.numTickets > 6) {
+      alert("Invalid number of tickets. You can play with 1 to 6 tickets.");
+      return;
+    }
+
     this.player.name = this.playerNickname;
 
     let playerJoined: PlayerJoined = new PlayerJoined();

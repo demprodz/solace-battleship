@@ -220,6 +220,28 @@ public class GameEngine implements IGameEngine {
   }
 
   @Override
+  public PrizeSubmitResult requestToOverridePrize(PrizeSubmitRequest request) {
+    GameSession session = gameSessionMap.get(request.getSessionId());
+
+    if (session == null) {
+      return new PrizeSubmitResult(request.getSessionId(), request.getPlayerId(), false, SESSION_DOES_NOT_EXIST_ERROR);
+    } else {
+      return session.submitOverridePrizeRequest(request);
+    }
+  }
+
+  @Override
+  public PrizeSubmitResult requestToConfirmDeniedPrize(PrizeSubmitRequest request) {
+    GameSession session = gameSessionMap.get(request.getSessionId());
+
+    if (session == null) {
+      return new PrizeSubmitResult(request.getSessionId(), request.getPlayerId(), false, SESSION_DOES_NOT_EXIST_ERROR);
+    } else {
+      return session.confirmDeniedPrizeRequest(request);
+    }
+  }
+
+  @Override
   public boolean updatePrizeStatus(PrizeSubmitRequest request) {
     GameSession session = gameSessionMap.get(request.getSessionId());
 

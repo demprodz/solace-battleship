@@ -50,17 +50,19 @@ public class FourCornersPrize implements IPrize {
         }
 
         if (markedSpots[0][0] && markedSpots[0][4] && markedSpots[2][0] && markedSpots[2][4]) {
-            numClaimedPrizes++;
-            winners.add(player.getName());
-
-            if (numPrizes == numClaimedPrizes) {
-                isTaken = true;
-            }
-
             return true;
         }
 
         return false;
+    }
+
+    public void addWinner(String playerName) {
+        numClaimedPrizes++;
+        winners.add(playerName);
+
+        if (numPrizes == numClaimedPrizes) {
+            isTaken = true;
+        }
     }
 
     public int getNumPrizes() {
