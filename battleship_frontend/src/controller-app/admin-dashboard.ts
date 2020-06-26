@@ -18,6 +18,7 @@ import {
   PrizeModeResult,
   PrizeSubmitResult,
   PrizeSubmitEvent,
+  Player,
 } from "../common/events";
 import { bindable, inject } from "aurelia-framework";
 import { SolaceClient } from "common/solace-client";
@@ -32,6 +33,11 @@ export class AdminDashboard {
   private currentNumber: number;
   private autoMode: boolean = false;
   private prizeOnMode: boolean = false;
+  private overrideOnMode: boolean = false;
+  private overrideQueue: PrizeSubmitResult[];
+  private currentOverridePlayerName: string = "";
+  private currentOverridePrizeName: string = "";
+
   private timer: number = 10;
   private sessionId: string;
   private topicPrefix: string;
@@ -69,6 +75,7 @@ export class AdminDashboard {
     this.prizes = this.gameNumberSet.prizes;
     this.timer = this.gameStart.timer;
     this.autoMode = this.gameStart.isAutoMode;
+    this.overrideQueue = [];
   }
 
   activate(params, routeConfig) {
@@ -130,29 +137,13 @@ export class AdminDashboard {
         let prizeSubmitResult: PrizeSubmitResult = JSON.parse(msg.getBinaryAttachment());
 
         if (prizeSubmitResult.responseType === "FAILURE") {
-          const prizeOverride = confirm(
-            prizeSubmitResult.playerName +
-              " was denied " +
-              this.prizes[prizeSubmitResult.selectedPrizeIndex].prizeName +
-              ". If you think they were incorrectly denied and deserve the prize, then press OK. If not, press Cancel."
-          );
+          if (this.overrideQueue.length == 0) {
+            this.currentOverridePlayerName = prizeSubmitResult.playerName;
+            this.currentOverridePrizeName = this.prizes[prizeSubmitResult.selectedPrizeIndex].prizeName;
+          }
 
-          //WARM-UP THE NEXTNUMBER-CONFIRM-REPLY SUBSCRIPTION
-          this.solaceClient.subscribeReply(`${this.topicPrefix}/PRIZE-OVERRIDE-REPLY/${prizeSubmitResult.playerId}/CONTROLLER`);
-
-          let prizeOverrideRequest: PrizeSubmitEvent = new PrizeSubmitEvent();
-          prizeOverrideRequest.sessionId = this.sessionId;
-          prizeOverrideRequest.playerId = prizeSubmitResult.playerId;
-          prizeOverrideRequest.ticket = prizeSubmitResult.ticket;
-          prizeOverrideRequest.selectedPrizeIndex = prizeSubmitResult.selectedPrizeIndex;
-          prizeOverrideRequest.isConfirmedDenial = !prizeOverride;
-
-          //Send the request to override prize denial, award prize to player.
-          this.solaceClient
-            .sendRequest(`${this.topicPrefix}/PRIZE-OVERRIDE-REQUEST`, JSON.stringify(prizeOverrideRequest), `${this.topicPrefix}/PRIZE-OVERRIDE-REPLY/${prizeSubmitResult.playerId}/CONTROLLER`)
-            .catch((err) => {
-              this.error = err;
-            });
+          this.overrideQueue.push(prizeSubmitResult);
+          this.overrideOnMode = true;
         }
       }
     );
@@ -193,7 +184,7 @@ export class AdminDashboard {
    * Submit request to choose the next random number
    */
   chooseNextNumberEvent() {
-    if (this.prizeOnMode === true) {
+    if (this.prizeOnMode === true || this.overrideOnMode === true) {
       return;
     }
 
@@ -230,6 +221,36 @@ export class AdminDashboard {
       });
   }
 
+  submitPrizeOverride(isOverride: boolean) {
+    //WARM-UP THE NEXTNUMBER-CONFIRM-REPLY SUBSCRIPTION
+    this.solaceClient.subscribeReply(`${this.topicPrefix}/PRIZE-OVERRIDE-REPLY/${this.overrideQueue[0].playerId}/CONTROLLER`);
+
+    let prizeOverrideRequest: PrizeSubmitEvent = new PrizeSubmitEvent();
+    prizeOverrideRequest.sessionId = this.sessionId;
+    prizeOverrideRequest.playerId = this.overrideQueue[0].playerId;
+    prizeOverrideRequest.ticket = this.overrideQueue[0].ticket;
+    prizeOverrideRequest.selectedPrizeIndex = this.overrideQueue[0].selectedPrizeIndex;
+    prizeOverrideRequest.isConfirmedDenial = !isOverride;
+
+    //Send the request to override prize denial, award prize to player.
+    this.solaceClient
+      .sendRequest(`${this.topicPrefix}/PRIZE-OVERRIDE-REQUEST`, JSON.stringify(prizeOverrideRequest), `${this.topicPrefix}/PRIZE-OVERRIDE-REPLY/${this.overrideQueue[0].playerId}/CONTROLLER`)
+      .catch((err) => {
+        this.error = err;
+      });
+
+    this.overrideQueue.shift();
+
+    if (this.overrideQueue.length > 0) {
+      this.currentOverridePlayerName = this.overrideQueue[0].playerName;
+      this.currentOverridePrizeName = this.prizes[this.overrideQueue[0].selectedPrizeIndex].prizeName;
+    } else {
+      this.overrideOnMode = false;
+      this.currentOverridePlayerName = "";
+      this.currentOverridePrizeName = "";
+    }
+  }
+
   toggleAutoMode() {
     this.autoMode = !this.autoMode;
   }
@@ -240,7 +261,7 @@ export class AdminDashboard {
         return;
       }
 
-      if (this.autoMode && !this.prizeOnMode) {
+      if (this.autoMode === true && this.prizeOnMode !== true && this.overrideOnMode !== true) {
         this.chooseNextNumberEvent();
       }
     }, this.timer * 1000);

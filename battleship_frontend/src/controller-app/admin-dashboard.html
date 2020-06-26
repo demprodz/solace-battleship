@@ -3,7 +3,7 @@
   <require from="../common/scoreboard"></require>
   <div class="flex-column align__center w-100 h-100">
     <div show.bind="pageState ==='GAME_OVER_STATE'" class="margin-top-10px w-100 message-container">Game over</div>
-    <div class="main_section ${prizeOnMode === true ? 'blurred' : ''}">
+    <div class="main_section ${prizeOnMode === true || overrideOnMode === true ? 'blurred' : ''}">
       <div class="side_sectional">
         <div class="dashboard_prize_section">
           <div class="prize_options_section">
@@ -32,12 +32,15 @@
         <div class="action-section margin-top-10px">
           <button
             class="landing-page__nav-button button-styling margin-top-10px margin-right-10px"
-            click.delegate="pageState !=='GAME_OVER_STATE' && autoMode == false && prizeOnMode !== true ? chooseNextNumberEvent() : null"
+            click.delegate="pageState !=='GAME_OVER_STATE' && autoMode == false && prizeOnMode !== true && overrideOnMode !== true ? chooseNextNumberEvent() : null"
           >
             Next
           </button>
-          <button class="landing-page__nav-button cancel-button-styling margin-top-10px margin-left-10px ${autoMode == true && prizeOnMode !== true ? 'blue' : ''}" click.trigger="toggleAutoMode()">
-            ${autoMode == true && prizeOnMode !== true? "Auto Mode On" : "Auto Mode Off"}
+          <button
+            class="landing-page__nav-button cancel-button-styling margin-top-10px margin-left-10px ${autoMode == true && prizeOnMode !== true && overrideOnMode !== true ? 'blue' : ''}"
+            click.trigger="toggleAutoMode()"
+          >
+            ${autoMode == true && prizeOnMode !== true && overrideOnMode !== true ? "Auto Mode On" : "Auto Mode Off"}
           </button>
         </div>
       </div>
@@ -54,6 +57,17 @@
         </div>
       </div>
     </div>
-    <div class="prize_message" hidden.bind="prizeOnMode !== true">Player(s) may be submitting a prize request...</div>
+    <div class="prize_message" hidden.bind="prizeOnMode !== true || overrideOnMode === true">Player(s) may be submitting a prize request...</div>
+    <div class="prize_message" hidden.bind="overrideOnMode !== true">
+      <div class="action-section">
+        ${currentOverridePlayerName} was denied ${currentOverridePrizeName}. If you think they were incorrectly denied and deserve the prize, then press Yes. If not, press No.<br />
+        <button class="landing-page__nav-button button-styling margin-top-10px margin-right-10px" click.delegate="submitPrizeOverride(true)">
+          Yes
+        </button>
+        <button class="landing-page__nav-button cancel-button-styling margin-top-10px margin-left-10px}" click.trigger="submitPrizeOverride(false)">
+          No
+        </button>
+      </div>
+    </div>
   </div>
 </template>
