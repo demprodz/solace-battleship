@@ -20,7 +20,7 @@ export class AdminLandingPage {
   private sessionSummary: SessionSummary;
 
   private isAutoMode: boolean = false;
-  private timers: string[] = ["5 seconds", "10 seconds", "30 seconds", "45 seconds", "60 seconds"];
+  private timers: string[] = ["10 seconds", "30 seconds", "45 seconds", "60 seconds"];
   private selectedTimer: string = "";
 
   private pageState: string = "Loading game...";

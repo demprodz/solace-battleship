@@ -95,9 +95,6 @@ public class GameSession {
     gameStart.setIsAutoMode(isAutoMode);
 
     switch (selectedTimer) {
-      case "5 seconds":
-        this.timer = 5;
-        break;
       case "10 seconds":
         this.timer = 10;
         break;
