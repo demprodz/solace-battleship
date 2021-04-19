@@ -10,10 +10,10 @@
  * @author Thomas Kunnumpurath, Andrew Roberts
  */
 export const gameConfig = {
-  solace_hostUrl: process.env.hostUrl,
-  solace_vpn: process.env.vpn,
-  solace_userName: process.env.userName,
-  solace_password: process.env.password,
+  solace_hostUrl: "wss://mru4ref8tk6x3.messaging.solace.cloud:443",
+  solace_vpn: "housie",
+  solace_userName: "solace-cloud-client",
+  solace_password: "hbk1sl1h0kp1tv0btb8e4sjg6u",
   allowed_ships: 5,
   gameboard_dimensions: 5,
   numRows: 3,
